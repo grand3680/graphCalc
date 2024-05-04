@@ -4,7 +4,7 @@ import { graphDraw } from "./index";
 export class graph {
   public canvas: HTMLCanvasElement;
   public drawGraph: graphDraw;
-  public colors : string[];
+  public colors: string[];
 
   public scaleNum: number;
   public func: any[];
@@ -35,7 +35,7 @@ export class graph {
 
     this.start();
   }
-  public formulaGraph(val: string, indexInput : number) {
+  public formulaGraph(val: string, indexInput: number) {
     try {
       console.log(indexInput);
       var correctFormla = val
@@ -46,7 +46,7 @@ export class graph {
         .replace(/\^/g, "**")
         .replace(/tan/g, "Math.tan")
         .replace(/log/g, "Math.log")
-      .replace(/ctg/g, "1/Math.tan(x)")
+        .replace(/ctg/g, "1/Math.tan(x)")
 
       this.func[indexInput] = new Function('x', 'return ' + correctFormla);
       this.start();
@@ -54,8 +54,8 @@ export class graph {
       console.log(error);
     }
   }
-  set funcSet(val : any[]) {this.func = val;}
-  get funcGet(){return this.func}
+  set funcSet(val: any[]) { this.func = val; }
+  get funcGet() { return this.func }
 
   public setSizeCanvas() { this.drawGraph.setSizeCanvas(); }
 
