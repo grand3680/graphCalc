@@ -5,6 +5,10 @@ export class graph {
   public canvas: HTMLCanvasElement;
   public drawGraph: graphDraw;
   public colors: string[];
+  public isDragging: boolean = false;
+
+  public dragStartX: number = 0;
+  public dragStartY: number = 0;
 
   public scaleNum: number;
   public func: any[];
@@ -13,14 +17,35 @@ export class graph {
     this.canvas = canvas;
 
     this.scaleNum = 4;
-
     this.func = [new Function('x', 'return ' + "Math.tan(x)")];
 
     this.drawGraph = new graphDraw(this.canvas, this.scaleNum)
-    this.colors = ["#ff0000", "#D28F4C"];
+    this.colors = ["#ff0000", "#D28F4C", "#F38E05"];
 
     this.drawGraph.resetCanvas();
   }
+
+  public handleMouseDown = (event: MouseEvent) => {
+    this.isDragging = true;
+    this.dragStartX = event.clientX;
+    this.dragStartY = event.clientY;
+  };
+
+  public handleMouseUp = () => this.isDragging = false;
+
+  public handleMouseMove = (event: MouseEvent) => {
+    if (this.isDragging) {
+      const deltaX = event.clientX - this.dragStartX;
+      const deltaY = event.clientY - this.dragStartY;
+
+      this.drawGraph.offsetXset = -deltaX;
+      this.drawGraph.offsetYset = -deltaY;
+      this.start();
+
+      this.dragStartX = event.clientX;
+      this.dragStartY = event.clientY;
+    }
+  };
 
   public wheelEvent(event: WheelEvent) {
     if (event.deltaY < 0) {
@@ -35,6 +60,7 @@ export class graph {
 
     this.start();
   }
+
   public formulaGraph(val: string, indexInput: number) {
     try {
       console.log(indexInput);
@@ -58,7 +84,6 @@ export class graph {
   get funcGet() { return this.func }
 
   public setSizeCanvas() { this.drawGraph.setSizeCanvas(); }
-
 
   public start() {
     this.drawGraph.resetCanvas();

@@ -9,14 +9,27 @@ import Menu from "../menuGraph/menu";
 export const GraphComponnent: FC = () => {
   const canvasRef = useRef(null);
   const { graph: GraphInst, updateContext } = useContext(MyContext);
-  const [width, setWidth] = useState<number>(window.innerWidth-400);
+  const [width, setWidth] = useState<number>(window.innerWidth - 400);
   const [height, setHeight] = useState<number>(window.innerHeight);
+
+  var mousedown = (e : any) => {
+    if (!GraphInst) return;
+    GraphInst.handleMouseDown(e);
+  };
+  var onMouseUp = () => {
+    if (!GraphInst) return;
+    GraphInst.handleMouseUp();
+  };
+  var onMouseMove = (e : any) => {
+    if (!GraphInst) return;
+    GraphInst.handleMouseMove(e);
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    var graph2 = new graph(canvas);
-    updateContext(graph2);
+    var graphInstan = new graph(canvas);
+    updateContext(graphInstan);
   }, []);
 
   useEffect(() => {
@@ -29,18 +42,25 @@ export const GraphComponnent: FC = () => {
 
     window.addEventListener("resize", () => {
       console.log(width, height, window.innerWidth);
-      setWidth(window.innerWidth-400) ;
-      setHeight(window.innerHeight) ;
+      setWidth(window.innerWidth - 400);
+      setHeight(window.innerHeight);
       GraphInst.setSizeCanvas();
     });
-
   }, [GraphInst]);
 
   return (
     <>
       <div className="graphBlock">
         <Menu />
-        <canvas width={width} height={height} ref={canvasRef} id="canvas" />
+        <canvas
+          onMouseDown={(e) => mousedown(e)}
+          onMouseUp={() => onMouseUp()}
+          onMouseMove={(e) => onMouseMove(e)}
+          width={width}
+          height={height}
+          ref={canvasRef}
+          id="canvas"
+        />
       </div>
     </>
   );

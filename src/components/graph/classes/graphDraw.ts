@@ -5,7 +5,7 @@ export class graphDraw {
   protected drawAxis = drawAxis;
   protected drawGraph = drawGraph;
 
-  protected canvas : HTMLCanvasElement;
+  protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
 
   protected widthGrap: number;
@@ -13,21 +13,31 @@ export class graphDraw {
   public gapTxtX: number;
   public gapTxtY: number;
   protected centreGrap: number;
-  
+
   public paddinWidth: number;
   public paddinHeight: number;
   public centreGrapWidth: number;
   public centreGrapHeight: number;
 
+  public offsetX: number;
+  public offsetY: number;
 
-  constructor(canvas: HTMLCanvasElement, scaleNum : number) {
+  set offsetXset(val: number) { this.offsetX += val };
+  set offsetYset(val: number) { this.offsetY += val }
+
+
+  constructor(canvas: HTMLCanvasElement, scaleNum: number) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
-    
+
     this.paddinWidth = this.canvas.width;
     this.paddinHeight = this.canvas.height;
     this.centreGrapWidth = this.paddinWidth / 2;
-    this.centreGrapHeight= this.paddinHeight / 2;
+    this.centreGrapHeight = this.paddinHeight / 2;
+
+    this.offsetX = 0;
+    this.offsetY = 0;
+
     this.widthGrap = 5;
     this.scaleNum = scaleNum;
 
@@ -37,14 +47,14 @@ export class graphDraw {
     this.centreGrap = 10;
   }
 
-  set scaleNumSet(val : number) {
+  set scaleNumSet(val: number) {
     this.scaleNum = val
   }
 
   protected giveObj(x: number, y: number) {
     return {
-      x: (x * this.gapTxtX) + this.centreGrapWidth,
-      y: this.centreGrapHeight - (y * this.gapTxtY)
+      x: (x * this.gapTxtX) + this.centreGrapWidth - this.offsetX,
+      y: this.centreGrapHeight - (y * this.gapTxtY) - this.offsetY
     }
   }
 
@@ -56,7 +66,7 @@ export class graphDraw {
     this.paddinWidth = this.canvas.width;
     this.paddinHeight = this.canvas.height;
     this.centreGrapWidth = this.paddinWidth / 2;
-    this.centreGrapHeight= this.paddinHeight / 2;
+    this.centreGrapHeight = this.paddinHeight / 2;
     this.resetCanvas();
   }
 
@@ -65,7 +75,7 @@ export class graphDraw {
     this.drawAxis();
   }
 
-  public graphDraawing(fun : (val: number) => number, color : string) {
+  public graphDraawing(fun: (val: number) => number, color: string) {
     var xPrev = -this.scaleNum;
     var xNext = -this.scaleNum;
 
