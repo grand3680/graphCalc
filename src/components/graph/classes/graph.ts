@@ -1,36 +1,25 @@
-import { drawAxis, drawGraph } from "./index";
+import { graphDraw } from "./index";
 
 
 export class graph {
-  protected drawAxis = drawAxis;
-  public drawGraph = drawGraph;
-
   public canvas: HTMLCanvasElement;
-  public ctx: CanvasRenderingContext2D;
-  public paddinWidth: number;
-  public centreGrap: number;
-  public widthGrap: number;
-  public scaleNum: number;
-  public gapTxt: number;
-  public formula: string;
-  public func: any;
+  public drawGraph: graphDraw;
+  public colors : string[];
 
+  public scaleNum: number;
+  public func: any[];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.ctx = this.canvas.getContext('2d')!;
 
-    this.paddinWidth = canvas.width;
-    this.centreGrap = this.paddinWidth / 2;
-    this.widthGrap = 5;
     this.scaleNum = 4;
-    this.gapTxt = Math.floor(this.paddinWidth / (this.scaleNum * 2));
-    this.formula = "Math.sin(x**2)";
 
-    this.func = new Function('x', 'return ' + this.formula);
+    this.func = [new Function('x', 'return ' + "Math.tan(x)")];
 
+    this.drawGraph = new graphDraw(this.canvas, this.scaleNum)
+    this.colors = ["#ff0000", "#D28F4C"];
 
-    this.start();
+    this.drawGraph.resetCanvas();
   }
 
   public wheelEvent(event: WheelEvent) {
@@ -41,53 +30,40 @@ export class graph {
       this.scaleNum += 2;
     }
 
-    this.ctx.clearRect(0, 0, this.paddinWidth, this.paddinWidth)
+    this.drawGraph.clearCanvas();
+    this.drawGraph.scaleNumSet = this.scaleNum;
+
     this.start();
   }
-  set formulaGraph(val: string) {
+  public formulaGraph(val: string, indexInput : number) {
     try {
-      this.formula = val;
-      var correctFormla = this.formula
+      console.log(indexInput);
+      var correctFormla = val
         .replace(/pi/g, "Math.PI")
         .replace(/sin/g, "Math.sin")
         .replace(/cos/g, "Math.cos")
         .replace(/e/g, "Math.exp(1)")
         .replace(/\^/g, "**")
         .replace(/tan/g, "Math.tan")
-        // .replace(/ctg/g, "1/Math.tan(x)")
         .replace(/log/g, "Math.log")
+      .replace(/ctg/g, "1/Math.tan(x)")
 
-      this.func = new Function('x', 'return ' + correctFormla);
-
+      this.func[indexInput] = new Function('x', 'return ' + correctFormla);
+      this.start();
     } catch (error) {
       console.log(error);
     }
   }
+  set funcSet(val : any[]) {this.func = val;}
+  get funcGet(){return this.func}
+
+  public setSizeCanvas() { this.drawGraph.setSizeCanvas(); }
+
 
   public start() {
-    this.drawAxis();
-    this.graphDraawing();
-  }
-
-  public graphFormula(x: number) {
-    return this.func(x)
-  }
-
-  protected giveObj(x: number, y: number) {
-    return {
-      x: (x * this.gapTxt) + this.centreGrap,
-      y: this.centreGrap - (y * this.gapTxt)
-    }
-  }
-
-  public graphDraawing() {
-    var xPrev = -this.scaleNum;
-    var xNext = -this.scaleNum;
-
-    while (xNext < this.scaleNum) {
-      xNext = xPrev + 0.1;
-      this.drawGraph(xPrev, xNext);
-      xPrev = xNext;
+    this.drawGraph.resetCanvas();
+    for (var i = 0; i < this.func.length; i++) {
+      this.drawGraph.graphDraawing(this.func[i], this.colors[i]);
     }
   }
 }

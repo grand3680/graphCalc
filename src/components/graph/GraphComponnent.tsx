@@ -9,8 +9,8 @@ import Menu from "../menuGraph/menu";
 export const GraphComponnent: FC = () => {
   const canvasRef = useRef(null);
   const { graph: GraphInst, updateContext } = useContext(MyContext);
-  const [width] = useState<number>(800);
-  const [height] = useState<number>(800);
+  const [width, setWidth] = useState<number>(window.innerWidth-400);
+  const [height, setHeight] = useState<number>(window.innerHeight);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -26,6 +26,14 @@ export const GraphComponnent: FC = () => {
     window.addEventListener("wheel", (event) => {
       GraphInst.wheelEvent(event);
     });
+
+    window.addEventListener("resize", () => {
+      console.log(width, height, window.innerWidth);
+      setWidth(window.innerWidth-400) ;
+      setHeight(window.innerHeight) ;
+      GraphInst.setSizeCanvas();
+    });
+
   }, [GraphInst]);
 
   return (

@@ -1,39 +1,70 @@
 import { type FC, useContext, useEffect, useState } from "react";
 import "./styles/graphMenu.css";
-import useDebounce from "../../hooks/useDebounce";
-import MyContext from "../../components/MyContext"
+import MyContext from "../../components/MyContext";
 
-export const GraphComponnent: FC = () => {
-  const {graph : GraphInst} = useContext(MyContext);
-  const [inputTxt, setInputTxt] = useState<string>("");
+export const GraphComponent: FC = () => {
+  const { graph: GraphInst } = useContext(MyContext);
+  const [inputs, setInputs] = useState<string[]>([]);
+  const [_, setDebounceHandlers] = useState<number[]>([]);
 
-  const debouncedGraphTerm = useDebounce(inputTxt, 500);
-
-  
   useEffect(() => {
-      if (debouncedGraphTerm) {
-        if (!GraphInst) return;
-        setInputTxt(debouncedGraphTerm);
-        GraphInst.formulaGraph = debouncedGraphTerm;
-      } else {
-        setInputTxt("");
-      }
-    },
-    [debouncedGraphTerm]
-  );
+    const newDebounceHandlers: number[] = [];
+    inputs.forEach((input, index) => {
+      const handler = setTimeout(() => {
+        if (GraphInst) {
+          GraphInst.formulaGraph(input, index);
+        }
+      }, 500);
+      newDebounceHandlers.push(handler);
+    });
 
+    // Set debounce handlers
+    setDebounceHandlers(newDebounceHandlers);
+
+    return () => {
+      newDebounceHandlers.forEach((handler) => clearTimeout(handler));
+    };
+  }, [inputs, GraphInst, setDebounceHandlers]);
+
+  const handleAddInput = () => {
+    setInputs([...inputs, '']);
+  };
+
+  const handleDeleteInput = (index: number) => {
+    const newInputs = [...inputs];
+    newInputs.splice(index, 1);
+    if (GraphInst) {
+      var Allfunc = GraphInst.funcGet;
+      Allfunc.splice(index, 1);
+      GraphInst.funcSet = Allfunc;
+      setInputs(newInputs);
+    }
+  };
+
+  const handleInputChange = (index: number, value: string) => {
+    const newInputs = [...inputs];
+    newInputs[index] = value;
+    setInputs(newInputs);
+  };
 
   return (
     <>
       <div className="graphBlockInput">
-        <input
-          className="graphInput"
-          onChange={(e) => setInputTxt(e.target.value)}
-          type="text"
-        />
+        {inputs.map((input, index) => (
+          <div className="inputWrapper" key={index}>
+            <input
+              className="graphInput"
+              value={input}
+              onChange={(e) => handleInputChange(index, e.target.value)}
+              type="text"
+              placeholder={`Input ${index}`}
+            />
+            <button className="deleteButton" onClick={() => handleDeleteInput(index)}>Delete</button>
+          </div>
+        ))}
+        <button className="addButton" onClick={handleAddInput}>Add</button>
       </div>
     </>
   );
 };
-
-export default GraphComponnent;
+export default GraphComponent;

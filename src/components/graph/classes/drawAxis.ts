@@ -1,26 +1,32 @@
-import { graph } from "./index";
+import { graphDraw } from "./index";
 
-export function drawAxis(this: graph): void {
-  this.gapTxt = this.paddinWidth / (this.scaleNum * 2);
+export function drawAxis(this: graphDraw): void {
+  this.gapTxtX = this.paddinWidth / (this.scaleNum * 2);
+  this.gapTxtY = this.paddinHeight / (this.scaleNum * 2);
 
   this.ctx.beginPath();
-  this.ctx.font = "26px serif";
+  this.ctx.font = "40px serif";
   this.ctx.fillStyle = "white";
 
   this.ctx.strokeStyle = 'white';
-  this.ctx.fillRect(0, this.paddinWidth / 2, this.paddinWidth, 2);
-  this.ctx.fillRect(this.paddinWidth / 2, 0, 2, this.paddinWidth);
+
+  // x and y line Axis
+  this.ctx.fillRect(0, this.centreGrapHeight, this.paddinWidth, 2);
+  this.ctx.fillRect(this.centreGrapWidth, 0, 2, this.paddinHeight);
 
   var temp = 1;
   for (var i = 0; i <= this.scaleNum * 2; i++) {
-    temp = temp + this.gapTxt;
-    if (temp >= 26) {
+    temp = temp + this.gapTxtX;
+    if (temp >= 40) {
       temp = 0
-      this.ctx.fillRect(0, i * this.gapTxt, this.paddinWidth, 0.5);
-      this.ctx.fillRect(i * this.gapTxt, 0,   0.5, this.paddinWidth);
 
-      this.ctx.fillText((i - (this.scaleNum * 2) / 2).toString(), this.gapTxt * i + 5, this.centreGrap);
-      this.ctx.fillText((i - (this.scaleNum * 2) / 2).toString(), this.centreGrap + 5, this.paddinWidth - this.gapTxt * i);
+      // x, y small Axis graph      
+      this.ctx.fillRect(0, i * this.gapTxtY, this.paddinWidth, 0.5);
+      this.ctx.fillRect(i * this.gapTxtX, 0, 0.5, this.paddinHeight);
+
+
+      this.ctx.fillText((i - (this.scaleNum * 2) / 2).toString(), this.gapTxtX * i + 5, this.centreGrapHeight);
+      this.ctx.fillText((i - (this.scaleNum * 2) / 2).toString(), this.centreGrapWidth + 5, this.paddinHeight - this.gapTxtY * i);
     };
   }
 
