@@ -2,7 +2,7 @@
     height: 800px;
     width: 800px;
     border: black 5px solid;
-    margin: 100px;
+    margin-right: auto;
     display: block;
     background-color: transparent;
 }

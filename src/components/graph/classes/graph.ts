@@ -50,7 +50,12 @@ export class graph {
       var correctFormla = this.formula
         .replace(/pi/g, "Math.PI")
         .replace(/sin/g, "Math.sin")
-        .replace(/cos/g, "Math.cos");
+        .replace(/cos/g, "Math.cos")
+        .replace(/e/g, "Math.exp(1)")
+        .replace(/\^/g, "**")
+        .replace(/tan/g, "Math.tan")
+        // .replace(/ctg/g, "1/Math.tan(x)")
+        .replace(/log/g, "Math.log")
 
       this.func = new Function('x', 'return ' + correctFormla);
 
