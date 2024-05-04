@@ -1,0 +1,103 @@
+body {
+    background-color: #000000;
+    overflow-y: hidden;
+}
+
+
+/* Specify box sizing */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+/* Remove internal indentation */
+
+ul[class],
+ol[class] {
+    padding: 0;
+}
+
+
+/* Remove the outside indentation */
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+    margin: 0;
+}
+
+
+/* Set the basic default settings for body */
+
+body {
+    min-height: 100vh;
+    scroll-behavior: smooth;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+}
+
+
+/* Remove standard styling for all ul and il that have a class attribute*/
+
+ul[class],
+ol[class] {
+    list-style: none;
+}
+
+
+/* Elements a that don't have a class are reset to default styles */
+
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+
+/* Simplifying work with images */
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+
+/* Specify an understandable periodicity in the data flow of the article*/
+
+article>*+* {
+    margin-top: 1em;
+}
+
+
+/* Inherit fonts for intuitions and buttons */
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+
+/* Remove all animations and transitions for people who prefer not to use them */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
