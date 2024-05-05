@@ -15,10 +15,6 @@ jobs:
         with:
           node-version: '16'
 
-      - name: TestEcho
-        run: |
-          echo "just example"
-
       - name: Install
         run: |
           npm i 
