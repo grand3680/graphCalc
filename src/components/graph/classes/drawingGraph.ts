@@ -13,14 +13,14 @@ export function drawGraph(
   var showVal = this.size.cdiv(scale);
   
   const { x: X, y: Y } = showVal.ctimes(.5);
-  
+  console.log(Y);
 
 
   var dX = -this.offsetX;
-  var dY = -this.offsetY;
+  // var dY = -this.offsetY;
 
   var aX = dX / scale;
-  var aY = dY / scale;
+  // var aY = dY / scale;
   var size = this.sizeAxis;
 
   this.ctx.beginPath();
