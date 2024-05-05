@@ -1,35 +1,87 @@
+import { Vec2 } from "../../../utils/vec2";
+import { precision } from "../../../utils/mathCalc";
 import { graphDraw } from "./index";
 
 export function drawAxis(this: graphDraw): void {
-  this.gapTxtX = this.paddinWidth / (this.scaleNum * 2);
-  this.gapTxtY = this.paddinHeight / (this.scaleNum * 2);
 
-  this.ctx.beginPath();
-  this.ctx.font = "40px serif";
-  this.ctx.fillStyle = "white";
+  var scale = this.scale;
+  
+  const { x: X, y: Y } = this.size.cdiv(scale).ctimes(.5);
+  this.sizeAxisSet = Math.max(10, precision(Math.min(X, Y) / 5, 10));
 
+  var dX = -this.offsetX;
+  var dY = -this.offsetY;
+
+  var aX = dX / scale;
+  var aY = dY / scale;
+  var size = this.sizeAxis;
+
+  const center = new Vec2(this.size)
+    .times(0.5)
+    .plus(dX, dY);
+
+  // Camera
+  this.ctx.resetTransform();
+  this.clearCanvas();
+  this.ctx.setTransform(scale, 0, 0, scale, ...center.tuple);
+
+
+  // Grid
   this.ctx.strokeStyle = 'white';
+  this.ctx.strokeStyle = 'white';
+  this.ctx.fillStyle = "white";
+  this.ctx.beginPath();
+  {
+    this.ctx.moveTo(100, -Y - aY);
+    for (let x = precision(-X - aX - size, size); x <= X - aX; x += size) {
+      this.ctx.moveTo(x, -Y - aY);
+      this.ctx.lineTo(x, Y - aY);
+    }
 
-  // x and y line Axis
-  this.ctx.fillRect(0, this.centreGrapHeight - this.offsetY, this.paddinWidth, 2);
-  this.ctx.fillRect(this.centreGrapWidth - this.offsetX, 0, 2, this.paddinHeight);
+    for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += size) {
+      this.ctx.moveTo(-X - aX, y);
+      this.ctx.lineTo(X - aX, y);
+    }
 
-  var temp = 1;
-  for (var num = 0; num <= this.scaleNum * 2; num++) {
-    temp = temp + this.gapTxtX;
-    if (temp >= 40) {
-      temp = 0
-
-      // x, y small Axis graph      
-      this.ctx.fillRect(0, (num * this.gapTxtY) - this.offsetY, this.paddinWidth, 0.5);
-      this.ctx.fillRect((num * this.gapTxtX) - this.offsetX, 0, 0.5, this.paddinHeight);
-
-      var numberAxix = (num - this.scaleNum).toString();
-
-      this.ctx.fillText(numberAxix, this.gapTxtX * num + 5 - this.offsetX, this.centreGrapHeight - this.offsetY);
-      this.ctx.fillText(numberAxix, this.centreGrapWidth + 5 - this.offsetX, this.paddinHeight - this.gapTxtY * num - this.offsetY); 
-    };
+    this.ctx.lineWidth = 1 / scale;
+    this.ctx.stroke();
   }
+  this.ctx.closePath();
 
-  this.ctx.stroke();
+  // Axies
+  this.ctx.strokeStyle = '#733';
+  this.ctx.beginPath();
+  {
+    this.ctx.moveTo(0, -Y - aY);
+    this.ctx.lineTo(0, Y - aY);
+
+    this.ctx.moveTo(-X - aX, 0);
+    this.ctx.lineTo(X - aX, 0);
+
+    this.ctx.lineWidth = 4 / scale;
+    this.ctx.stroke();
+  }
+  this.ctx.closePath();
+
+
+  // Digits
+  this.ctx.fillStyle = '#fff';
+  this.ctx.font = `${20 / scale}px monospace`;
+  {
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'bottom';
+
+    for (let x = precision(-X - aX - size, size); x <= X - aX; x += size) {
+      if (x / 10 | 0)
+        this.ctx.fillText(` ${x / 10 | 0} `, x, 0);
+    }
+
+    this.ctx.textAlign = 'left';
+    this.ctx.textBaseline = 'middle';
+
+    for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += size) {
+      if (y / 10 | 0)
+        this.ctx.fillText(` ${-y / 10 | 0} `, 0, y);
+    }
+  }
 }

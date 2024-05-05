@@ -1,7 +1,7 @@
 #canvas {
     height: 100%;
     width: 100%;
-    border: black 5px solid;
+    border: none;
     margin-right: auto;
     display: block;
     background-color: transparent;

@@ -1,5 +1,5 @@
 import { graphDraw } from "./index";
-
+import {minMax } from "../../../utils/mathCalc"
 
 export class graph {
   public canvas: HTMLCanvasElement;
@@ -10,16 +10,16 @@ export class graph {
   public dragStartX: number = 0;
   public dragStartY: number = 0;
 
-  public scaleNum: number;
+  public scale: number;
   public func: any[];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
-    this.scaleNum = 4;
+    this.scale = 1;
     this.func = [new Function('x', 'return ' + "Math.tan(x)")];
 
-    this.drawGraph = new graphDraw(this.canvas, this.scaleNum)
+    this.drawGraph = new graphDraw(this.canvas, this.scale)
     this.colors = ["#ff0000", "#D28F4C", "#F38E05"];
 
     this.drawGraph.resetCanvas();
@@ -48,15 +48,9 @@ export class graph {
   };
 
   public wheelEvent(event: WheelEvent) {
-    if (event.deltaY < 0) {
-      if (this.scaleNum - 2 <= 0) return;
-      this.scaleNum -= 2;
-    } else {
-      this.scaleNum += 2;
-    }
+    this.scale = minMax(this.scale - event.deltaY * this.scale * 0.001, .01, 100);
 
-    this.drawGraph.clearCanvas();
-    this.drawGraph.scaleNumSet = this.scaleNum;
+    this.drawGraph.scaleNumSet = this.scale;
 
     this.start();
   }
@@ -72,9 +66,19 @@ export class graph {
         .replace(/\^/g, "**")
         .replace(/tan/g, "Math.tan")
         .replace(/log/g, "Math.log")
-        .replace(/ctg/g, "1/Math.tan(x)")
+        .replace(/ctg/g, "1/Math.tan")
+      var funcs = new Function('x', 'return ' + correctFormla);
 
-      this.func[indexInput] = new Function('x', 'return ' + correctFormla);
+
+      var checkFun = funcs(1);
+      if (typeof checkFun !== "number") {
+        throw new Error("Invalid function");
+      }
+
+
+      this.func[indexInput] = funcs
+      
+
       this.start();
     } catch (error) {
       console.log(error);

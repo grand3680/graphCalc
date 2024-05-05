@@ -1,3 +1,4 @@
+import { Vec2 } from '../../../utils/vec2';
 import { drawAxis, drawGraph } from './index';
 
 
@@ -9,9 +10,7 @@ export class graphDraw {
   protected ctx: CanvasRenderingContext2D;
 
   protected widthGrap: number;
-  protected scaleNum: number;
-  public gapTxtX: number;
-  public gapTxtY: number;
+  protected scale: number;
   protected centreGrap: number;
 
   public paddinWidth: number;
@@ -21,9 +20,11 @@ export class graphDraw {
 
   public offsetX: number;
   public offsetY: number;
+  public sizeAxis: number;
+  public size : Vec2;
 
   set offsetXset(val: number) { this.offsetX += val };
-  set offsetYset(val: number) { this.offsetY += val }
+  set offsetYset(val: number) { this.offsetY += val };
 
 
   constructor(canvas: HTMLCanvasElement, scaleNum: number) {
@@ -37,52 +38,36 @@ export class graphDraw {
 
     this.offsetX = 0;
     this.offsetY = 0;
+    this.sizeAxis = 5;
+  
+
+    this.size = new Vec2(Vec2.fromOffsetSize(this.canvas));
 
     this.widthGrap = 5;
-    this.scaleNum = scaleNum;
-
-    this.gapTxtX = Math.floor(this.paddinWidth / (this.scaleNum * 2));
-    this.gapTxtY = Math.floor(this.paddinHeight / (this.scaleNum * 2));
+    this.scale = scaleNum;
 
     this.centreGrap = 10;
   }
 
-  set scaleNumSet(val: number) {
-    this.scaleNum = val
-  }
+  set sizeAxisSet(val: number) { this.sizeAxis = val }
 
-  protected giveObj(x: number, y: number) {
-    return {
-      x: (x * this.gapTxtX) + this.centreGrapWidth - this.offsetX,
-      y: this.centreGrapHeight - (y * this.gapTxtY) - this.offsetY
-    }
-  }
+  set scaleNumSet(val: number) { this.scale = val }
 
   public clearCanvas() {
     this.ctx.clearRect(0, 0, this.paddinWidth, this.paddinWidth);
   }
 
   public setSizeCanvas() {
-    this.paddinWidth = this.canvas.width;
-    this.paddinHeight = this.canvas.height;
-    this.centreGrapWidth = this.paddinWidth / 2;
-    this.centreGrapHeight = this.paddinHeight / 2;
+    this.size = Vec2.fromOffsetSize(this.canvas);
     this.resetCanvas();
   }
 
   public resetCanvas() {
-    this.clearCanvas();
     this.drawAxis();
   }
 
   public graphDraawing(fun: (val: number) => number, color: string) {
-    var xPrev = -this.scaleNum;
-    var xNext = -this.scaleNum;
-
-    while (xNext < this.scaleNum) {
-      xNext = xPrev + 0.1;
-      this.drawGraph(xPrev, xNext, fun, color);
-      xPrev = xNext;
-    }
+    this.drawGraph(fun, color);
   }
+
 }

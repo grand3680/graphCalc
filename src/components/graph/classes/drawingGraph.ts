@@ -1,27 +1,37 @@
+import { precision } from "../../../utils/mathCalc";
 import { graphDraw } from "./index";
 
 export function drawGraph(
   this: graphDraw,
-  xPrev: number,
-  xNext: number,
   graphFormula: (val: number) => number,
   color : string,
 ): void {
 
+  
+  var scale = this.scale;
+  var p = this.size.cdiv(scale).cdiv(this.size)
+  var showVal = this.size.cdiv(scale);
+  
+  const { x: X, y: Y } = showVal.ctimes(.5);
+  
+
+
+  var dX = -this.offsetX;
+  var dY = -this.offsetY;
+
+  var aX = dX / scale;
+  var aY = dY / scale;
+  var size = this.sizeAxis;
+
   this.ctx.beginPath();
-  this.ctx.strokeStyle = color;
-  this.ctx.fillStyle = color;
-  this.ctx.lineWidth = 1.5;
+  
+  var first = true;
+  for (let x = precision(-X - aX - size, size); x <= X - aX; x += p.x) {
+    this.ctx[first ? 'moveTo' : 'lineTo'](x, -graphFormula(x / 10) * 10);
+    first = false;
+  }
 
-  var yPrev = graphFormula(xPrev);
-  var ObjXYprev = this.giveObj(xPrev, yPrev)
-  this.ctx.moveTo(ObjXYprev.x + this.widthGrap / 2, ObjXYprev.y);
-
-  var yNext = graphFormula(xNext);
-  var ObjXYnext = this.giveObj(xNext, yNext)
-  this.ctx.lineTo(ObjXYnext.x + this.widthGrap / 2, ObjXYnext.y);
-  this.ctx.fillRect(ObjXYnext.x, ObjXYnext.y, this.widthGrap, this.widthGrap);
-
+  this.ctx.strokeStyle = color ?? '#33f';
   this.ctx.stroke();
   this.ctx.closePath();
 }

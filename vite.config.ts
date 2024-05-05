@@ -10,6 +10,7 @@ export default defineConfig({
 
   build: {
     outDir: '../dist',
+    emptyOutDir : true,
     target: 'esnext',
   },
 
@@ -19,8 +20,8 @@ export default defineConfig({
   },
 
   plugins: [
+    react(),
     viteSingleFile(),
-    react()
   ],
   
 })
