@@ -1,5 +1,4 @@
 import { FC, PropsWithChildren, useState, createContext } from "react";
-// import { graph } from "../components/graph/classes/index";
 import { graph } from './graph/classes/index';
 
 const MyContext = createContext<{

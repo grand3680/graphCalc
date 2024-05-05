@@ -1,10 +1,10 @@
 import { type FC, useContext, useEffect, useState } from "react";
-import "./styles/graphMenu.css";
+import styles from "./styles/graphMenu.module.scss";
 import MyContext from "../../components/MyContext";
 
 export const GraphComponent: FC = () => {
   const { graph: GraphInst } = useContext(MyContext);
-  const [inputs, setInputs] = useState<string[]>([]);
+  const [inputs, setInputs] = useState<string[]>(["sin(x)"]);
   const [_, setDebounceHandlers] = useState<number[]>([]);
 
   useEffect(() => {
@@ -49,20 +49,20 @@ export const GraphComponent: FC = () => {
 
   return (
     <>
-      <div className="graphBlockInput">
+      <div className={styles.graphBlockInput}>
         {inputs.map((input, index) => (
-          <div className="inputWrapper" key={index}>
+          <div className={styles.inputWrapper} key={index}>
             <input
-              className="graphInput"
+              className={styles.graphInput}
               value={input}
               onChange={(e) => handleInputChange(index, e.target.value)}
               type="text"
               placeholder={`Input ${index}`}
             />
-            <button className="deleteButton" onClick={() => handleDeleteInput(index)}>Delete</button>
+            <button className={styles.deleteButton} onClick={() => handleDeleteInput(index)}>Delete</button>
           </div>
         ))}
-        <button className="addButton" onClick={handleAddInput}>Add</button>
+        <button className={styles.addButton} onClick={handleAddInput}>Add</button>
       </div>
     </>
   );

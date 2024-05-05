@@ -3,14 +3,13 @@ import { precision } from "../../../utils/mathCalc";
 import { graphDraw } from "./index";
 
 export function drawAxis(this: graphDraw): void {
-
   var scale = this.scale;
   
   const { x: X, y: Y } = this.size.cdiv(scale).ctimes(.5);
   this.sizeAxisSet = Math.max(10, precision(Math.min(X, Y) / 5, 10));
 
-  var dX = -this.offsetX;
-  var dY = -this.offsetY;
+  var dX = this.offsetX;
+  var dY = this.offsetY;
 
   var aX = dX / scale;
   var aY = dY / scale;
@@ -32,7 +31,6 @@ export function drawAxis(this: graphDraw): void {
   this.ctx.fillStyle = "white";
   this.ctx.beginPath();
   {
-    this.ctx.moveTo(100, -Y - aY);
     for (let x = precision(-X - aX - size, size); x <= X - aX; x += size) {
       this.ctx.moveTo(x, -Y - aY);
       this.ctx.lineTo(x, Y - aY);

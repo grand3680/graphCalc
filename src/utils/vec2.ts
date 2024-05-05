@@ -2,6 +2,7 @@ type TMutation = (x: number, y: number) => any;
 type TPointVec2 = { x: number, y: number; };
 type TTupleVec2 = [x: number, y: number];
 type TSizeVec2 = { width: number, height: number; };
+type TOffsetXY = { offsetX: number, offsetY: number; };
 
 type TRect2 = [
   ...([x: number, y: number] | [xy: Vec2]),
@@ -136,6 +137,14 @@ export class Vec2 {
 
   clone() {
     return new Vec2(this);
+  }
+
+  cminus(...args: TParameter) {
+    return this.clone().minus(...args);
+  }
+
+  static fromOffsetXY(offset: TOffsetXY, vec = new this()) {
+    return vec.set(offset.offsetX, offset.offsetY);
   }
 
   cdiv(...args: TParameter) {

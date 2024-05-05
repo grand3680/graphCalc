@@ -1,7 +1,7 @@
 import { type FC, useContext, useEffect, useRef, useState } from "react";
 import { graph } from "./classes/index";
-import "./styles/graph.css";
-import "./styles/index.css";
+import styles from "./styles/graph.module.scss";
+
 import MyContext from "../../components/MyContext";
 
 import Menu from "../menuGraph/menu";
@@ -9,10 +9,10 @@ import Menu from "../menuGraph/menu";
 export const GraphComponnent: FC = () => {
   const canvasRef = useRef(null);
   const { graph: GraphInst, updateContext } = useContext(MyContext);
-  const [width, setWidth] = useState<number>(window.innerWidth - 400);
+  const [width, setWidth] = useState<number>(window.innerWidth);
   const [height, setHeight] = useState<number>(window.innerHeight);
 
-  var mousedown = (e : any) => {
+  var mousedown = (e: any) => {
     if (!GraphInst) return;
     GraphInst.handleMouseDown(e);
   };
@@ -20,7 +20,7 @@ export const GraphComponnent: FC = () => {
     if (!GraphInst) return;
     GraphInst.handleMouseUp();
   };
-  var onMouseMove = (e : any) => {
+  var onMouseMove = (e: any) => {
     if (!GraphInst) return;
     GraphInst.handleMouseMove(e);
   };
@@ -41,8 +41,8 @@ export const GraphComponnent: FC = () => {
     });
 
     window.addEventListener("resize", () => {
-      console.log(width, height, window.innerWidth);
-      setWidth(window.innerWidth - 400);
+      if (!GraphInst) return;
+      setWidth(window.innerWidth);
       setHeight(window.innerHeight);
       GraphInst.setSizeCanvas();
     });
@@ -50,17 +50,20 @@ export const GraphComponnent: FC = () => {
 
   return (
     <>
-      <div className="graphBlock">
+      <div className={styles.graphBlock}>
         <Menu />
-        <canvas
-          onMouseDown={(e) => mousedown(e)}
-          onMouseUp={() => onMouseUp()}
-          onMouseMove={(e) => onMouseMove(e)}
-          width={width}
-          height={height}
-          ref={canvasRef}
-          id="canvas"
-        />
+        <div className={styles.canvasBlock}>
+          <canvas
+            className={styles.CanvasEl}
+            width={width}
+            height={height}
+            onMouseDown={(e) => mousedown(e)}
+            onMouseUp={() => onMouseUp()}
+            onMouseMove={(e) => onMouseMove(e)}
+            ref={canvasRef}
+          />          
+        </div>
+
       </div>
     </>
   );

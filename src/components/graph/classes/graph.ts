@@ -1,5 +1,6 @@
 import { graphDraw } from "./index";
-import {minMax } from "../../../utils/mathCalc"
+import { minMax } from "../../../utils/mathCalc"
+import { Vec2 } from "../../../utils/vec2";
 
 export class graph {
   public canvas: HTMLCanvasElement;
@@ -10,16 +11,14 @@ export class graph {
   public dragStartX: number = 0;
   public dragStartY: number = 0;
 
-  public scale: number;
   public func: any[];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
-    this.scale = 1;
-    this.func = [new Function('x', 'return ' + "Math.tan(x)")];
+    this.func = [new Function('x', 'return ' + "")];
 
-    this.drawGraph = new graphDraw(this.canvas, this.scale)
+    this.drawGraph = new graphDraw(this.canvas, 1)
     this.colors = ["#ff0000", "#D28F4C", "#F38E05"];
 
     this.drawGraph.resetCanvas();
@@ -38,8 +37,8 @@ export class graph {
       const deltaX = event.clientX - this.dragStartX;
       const deltaY = event.clientY - this.dragStartY;
 
-      this.drawGraph.offsetXset = -deltaX;
-      this.drawGraph.offsetYset = -deltaY;
+      this.drawGraph.offsetXset = deltaX;
+      this.drawGraph.offsetYset = deltaY;
       this.start();
 
       this.dragStartX = event.clientX;
@@ -48,16 +47,18 @@ export class graph {
   };
 
   public wheelEvent(event: WheelEvent) {
-    this.scale = minMax(this.scale - event.deltaY * this.scale * 0.001, .01, 100);
+    var scale = this.drawGraph.scaleNumGet;
 
-    this.drawGraph.scaleNumSet = this.scale;
+    this.drawGraph.toScale(
+      minMax(scale - event.deltaY * scale * 0.001, .01, 100),
+      Vec2.fromOffsetXY(event)
+    )
 
     this.start();
   }
 
   public formulaGraph(val: string, indexInput: number) {
     try {
-      console.log(indexInput);
       var correctFormla = val
         .replace(/pi/g, "Math.PI")
         .replace(/sin/g, "Math.sin")
@@ -77,7 +78,7 @@ export class graph {
 
 
       this.func[indexInput] = funcs
-      
+
 
       this.start();
     } catch (error) {

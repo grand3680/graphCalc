@@ -1,6 +1,10 @@
-body {
+body,
+html,
+#toot {
     background-color: #212120;
-    overflow-y: hidden;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
 }
 
 
