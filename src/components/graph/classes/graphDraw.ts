@@ -23,6 +23,10 @@ export class graphDraw {
   set offsetXset(val: number) { this.offsetX += val };
   set offsetYset(val: number) { this.offsetY += val };
 
+  set offsetXsetALL(val: number) { this.offsetX = val };
+  set offsetYsetALL(val: number) { this.offsetY = val };
+
+
   set sizeAxisSet(val: number) { this.sizeAxis = val }
   get scaleNumGet() { return this.scale }
   get sizeGet() { return this.size}

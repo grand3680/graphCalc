@@ -46,6 +46,11 @@ export const GraphComponent: FC = () => {
     newInputs[index] = value;
     setInputs(newInputs);
   };
+  const onClickHome = () => {
+    if (!GraphInst) return;
+    GraphInst.resetPos();
+    GraphInst.start();
+  }
 
   return (
     <>
@@ -64,6 +69,7 @@ export const GraphComponent: FC = () => {
         ))}
         <button className={styles.addButton} onClick={handleAddInput}>Add</button>
       </div>
+      <button onClick={onClickHome} className={styles.HomePage}>X</button>
     </>
   );
 };

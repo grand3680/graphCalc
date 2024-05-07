@@ -30,6 +30,23 @@ export class graph {
     this.dragStartY = event.clientY;
   };
 
+  public resetPos () {
+    this.drawGraph.offsetXsetALL = 0 - 200;
+    this.drawGraph.offsetYsetALL = 0;
+  }
+
+  set dragStartXSet(val : number) {
+    this.dragStartX = val;
+    this.drawGraph.offsetXsetALL = val;
+
+  }
+  set dragStartYSet(val : number) {
+    this.dragStartY = val;
+    this.drawGraph.offsetYsetALL = val;
+  }
+
+
+
   public handleMouseUp = () => this.isDragging = false;
 
   public handleMouseMove = (event: MouseEvent) => {
