@@ -1,6 +1,14 @@
 import { type FC, useContext, useEffect, useState } from "react";
 import styles from "./styles/graphMenu.module.scss";
-import MyContext from "../../components/MyContext";
+import MyContext from "../MyContext";
+
+
+import {
+  handleAddInput,
+  handleDeleteInput,
+  handleInputChange,
+} from "../graph/classes/handleInput";
+import HighLightConverter from "./highLight";
 
 export const GraphComponent: FC = () => {
   const { graph: GraphInst } = useContext(MyContext);
@@ -26,25 +34,17 @@ export const GraphComponent: FC = () => {
     };
   }, [inputs, GraphInst, setDebounceHandlers]);
 
-  const handleAddInput = () => {
-    setInputs([...inputs, '']);
+  const handleAddInputClick = () => {
+    handleAddInput(inputs, setInputs);
   };
 
-  const handleDeleteInput = (index: number) => {
-    const newInputs = [...inputs];
-    newInputs.splice(index, 1);
-    if (GraphInst) {
-      var Allfunc = GraphInst.funcGet;
-      Allfunc.splice(index, 1);
-      GraphInst.funcSet = Allfunc;
-      setInputs(newInputs);
-    }
+  const handleDeleteInputClick = (index: number) => {
+    if (!GraphInst) return;
+    handleDeleteInput(index, inputs, setInputs, GraphInst);
   };
 
-  const handleInputChange = (index: number, value: string) => {
-    const newInputs = [...inputs];
-    newInputs[index] = value;
-    setInputs(newInputs);
+  const handleInputChangeValue = (index: number, value: string) => {
+    handleInputChange(index, value, inputs, setInputs);
   };
   const onClickHome = () => {
     if (!GraphInst) return;
@@ -60,14 +60,22 @@ export const GraphComponent: FC = () => {
             <input
               className={styles.graphInput}
               value={input}
-              onChange={(e) => handleInputChange(index, e.target.value)}
+              onChange={(e) => handleInputChangeValue(index, e.target.value)}
               type="text"
               placeholder={`Input ${index}`}
             />
-            <button className={styles.deleteButton} onClick={() => handleDeleteInput(index)}>Delete</button>
+            <HighLightConverter expression={input} />
+            <button
+              className={styles.deleteButton}
+              onClick={() => handleDeleteInputClick(index)}
+            >
+              X
+            </button>
           </div>
         ))}
-        <button className={styles.addButton} onClick={handleAddInput}>Add</button>
+        <button className={styles.addButton} onClick={handleAddInputClick}>
+          Add
+        </button>
       </div>
       <button onClick={onClickHome} className={styles.HomePage}>X</button>
     </>

@@ -6,7 +6,7 @@ export function drawAxis(this: graphDraw): void {
   var scale = this.scale;
   
   const { x: X, y: Y } = this.size.cdiv(scale).ctimes(.5);
-  this.sizeAxisSet = Math.max(10, precision(Math.min(X, Y) / 5, 10));
+  this.sizeAxisSet = Math.max(10, precision(Math.min(X, Y) / 5, 5));
 
   var dX = this.offsetX;
   var dY = this.offsetY;
@@ -41,7 +41,7 @@ export function drawAxis(this: graphDraw): void {
       this.ctx.lineTo(X - aX, y);
     }
 
-    this.ctx.lineWidth = 1 / scale;
+    this.ctx.lineWidth = 0.5 / scale;
     this.ctx.stroke();
   }
   this.ctx.closePath();

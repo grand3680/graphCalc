@@ -2,6 +2,14 @@ import { Vec2 } from '../../../utils/vec2';
 import { precision } from "../../../utils/mathCalc";
 import { drawAxis, drawGraph } from './index';
 
+
+interface funG {
+  typeFun : string,
+  color : string,    
+  graphFormula: (val: number) => number,
+}
+
+
 export class graphDraw {
   protected drawAxis = drawAxis;
   protected drawGraph = drawGraph;
@@ -20,12 +28,11 @@ export class graphDraw {
   public size : Vec2;
   public mouse : Vec2 = new Vec2();
 
-  set offsetXset(val: number) { this.offsetX += val };
-  set offsetYset(val: number) { this.offsetY += val };
+  set offsetXplus(val: number) { this.offsetX += val };
+  set offsetYplus(val: number) { this.offsetY += val };
 
-  set offsetXsetALL(val: number) { this.offsetX = val };
-  set offsetYsetALL(val: number) { this.offsetY = val };
-
+  set offsetXset(val: number) { this.offsetX = val };
+  set offsetYset(val: number) { this.offsetY = val };
 
   set sizeAxisSet(val: number) { this.sizeAxis = val }
   get scaleNumGet() { return this.scale }
@@ -112,8 +119,8 @@ export class graphDraw {
     this.drawAxis();
   }
 
-  public graphDraawing(fun: (val: number) => number, color: string) {
-    this.drawGraph(fun, "x", color);
+  public graphDraawing( funcG2 : funG) {
+    this.drawGraph(funcG2);
   }
 
 }

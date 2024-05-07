@@ -2,7 +2,7 @@ import { type FC, useContext, useEffect, useRef, useState } from "react";
 import { graph } from "./classes/index";
 import styles from "./styles/graph.module.scss";
 
-import MyContext from "../../components/MyContext";
+import MyContext from "../MyContext";
 
 import Menu from "../menuGraph/menu";
 

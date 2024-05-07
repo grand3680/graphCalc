@@ -20,7 +20,7 @@ export default defineConfig({
   },
 
   plugins: [
-    react(),
+	  react({ plugins: [], tsDecorators: true }), 
     viteSingleFile(),
   ],
   
