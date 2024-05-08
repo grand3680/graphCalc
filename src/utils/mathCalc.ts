@@ -12,3 +12,8 @@ export const precision = (v: number, n = 1) => {
 
   return ((v / n) | 0) * n;
 };
+
+export const derivative = (func: (x: number) => number, x: number, h: number = 0.0001): number => {
+  const slope = (func(x + h) - func(x)) / h;
+  return slope;
+}

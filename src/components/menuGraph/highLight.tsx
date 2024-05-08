@@ -7,10 +7,10 @@ interface HighlightProps {
 
 const HighlightConverter: React.FC<HighlightProps> = ({ expression }) => {
   const convertExpression = (expression: string): JSX.Element => {
-    let converted = expression.replace(/\^(\d+)/g, (match, group) => `<sup>${group}</sup>`);
-    converted = converted.replace(/sqrt{(.+?)}/g, (match, group) => `√<span>${group}</span>`);
+    let converted = expression.replace(/\^(\d+)/g, (_, group) => `<sup>${group}</sup>`);
+    converted = converted.replace(/sqrt\((.+?)\)/g, (_, group) => `√<span class="Mathsqrt">${group}</span>`);
     
-    converted = converted.replace(/\/(?=[^\{\}]*\})/g, '</span><span class="division-line"></span><span>');
+    converted = converted.replace(/\/(?=[^\{\}]*})/g, '</span><span class="divisionLine"></span><span class="divisition">');
     const terms = converted.split(/([+-])/);
 
     return (

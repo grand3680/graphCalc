@@ -119,7 +119,7 @@ export class graph {
           correctFormla = correctFormla.replace(regexPattern, replacements[key]);
         }
       }
-      console.log(correctFormla);
+
       var func = new Function('x', 'return ' + correctFormla);
 
       var checkFun = func(1);
@@ -129,6 +129,7 @@ export class graph {
           color: "#ff0",
           graphFormula: null
         };
+        this.start();
         throw new Error("Invalid function");
       }
 

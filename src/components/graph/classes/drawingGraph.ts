@@ -24,7 +24,7 @@ export function drawGraph(
   var aX = dX / scale;
   var aY = dY / scale;
   var size = this.sizeAxis;
-  
+
   // time val to 1/2
   const { x: X, y: Y } = showVal.ctimes(2);
 

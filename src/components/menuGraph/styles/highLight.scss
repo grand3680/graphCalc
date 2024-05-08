@@ -25,15 +25,23 @@
     margin-right: 0;
 }
 
-.mathExpression span span span::before {
-    content: "";
-    border-top: 1px solid black;
-    width: 10px;
-    margin-right: 5px;
+// .mathExpression span span span::before {
+//     content: "";
+//     border-top: 1px solid white;  
+//     width: 10px;
+//     margin-right: 5px;
+// }
+.divisition {
+    color: white;
+}
+
+.Mathsqrt {
+    font-size: 15px;
+    border-top: 1ps;
 }
 
 .divisionLine {
-    border-top: 1px solid black;
+    border-top: 1px solid white;
     width: 100%;
     display: block;
     margin-top: 5px;

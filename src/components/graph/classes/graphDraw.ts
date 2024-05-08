@@ -1,6 +1,5 @@
 import { Vec2 } from '../../../utils/vec2';
-import { precision } from "../../../utils/mathCalc";
-import { drawAxis, drawGraph } from './index';
+import { drawAxis, drawGraph, findIntersectionPoints } from './index';
 
 
 interface funG {
@@ -13,6 +12,7 @@ interface funG {
 export class graphDraw {
   protected drawAxis = drawAxis;
   protected drawGraph = drawGraph;
+  protected findIntersectionPoints = findIntersectionPoints;
 
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
@@ -52,38 +52,6 @@ export class graphDraw {
     this.scale = scaleNum;
 
     this.centreGrap = 10;
-  }
-
-
-  public findIntersectionPoints(
-    func1: (val: number) => number,
-    func2: (val: number) => number,
-  ): number[][] {
-
-    var scale = this.scaleNumGet;
-    var showVal = this.size.cdiv(scale);
-
-    const { x: X } = showVal.ctimes(0.5);
-
-    var dX = -this.offsetX;
-    
-    var aX = dX / scale;
-    var size = this.sizeAxis;
-
-    var start = precision(-X - aX - size, size);
-    var end = X - aX;
-
-
-    const intersections: number[][] = [];
-    const step = 0.1; 
-    for (let x = start; x <= end; x += step) {
-      const y1 = func1(x);
-      const y2 = func2(x);
-      if (Math.abs(y1 - y2) < 0.1) {
-        intersections.push([x, y1]);
-      }
-    }
-    return intersections;
   }
 
   public clearCanvas() {

@@ -1,17 +1,19 @@
 import { Dispatch, SetStateAction } from "react";
 import { graph } from "./index"
 
+type inputsT = Array<[string, boolean]>;
+
 export const handleAddInput = (
-  inputs: string[],
-  setInputs: Dispatch<SetStateAction<string[]>>
+  inputs: inputsT,
+  setInputs: Dispatch<SetStateAction<inputsT>>
 ) => {
-  setInputs([...inputs, '']);
+  setInputs([...inputs, ["", false]]);
 };
 
 export const handleDeleteInput = (
   index: number,
-  inputs: string[],
-  setInputs: Dispatch<SetStateAction<string[]>>,
+  inputs: inputsT,
+  setInputs: Dispatch<SetStateAction<inputsT>>,
   GraphInstance: graph
 ) => {
   const newInputs = [...inputs];
@@ -27,10 +29,10 @@ export const handleDeleteInput = (
 export const handleInputChange = (
   index: number,
   value: string,
-  inputs: string[],
-  setInputs: Dispatch<SetStateAction<string[]>>
+  inputs: inputsT,
+  setInputs: Dispatch<SetStateAction<inputsT>>
 ) => {
   const newInputs = [...inputs];
-  newInputs[index] = value;
+  newInputs[index][0] = value;
   setInputs(newInputs);
 };
