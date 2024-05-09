@@ -15,8 +15,7 @@ export class graph {
   public funcs: {
     typeFun: string,
     color: string,
-    graphFormula: any
-    // funcGraph: (val: number) => number
+    graphFormula: any // refactor
   }[];
 
   constructor(canvas: HTMLCanvasElement) {
@@ -29,10 +28,15 @@ export class graph {
     }
     ];
 
-    this.drawGraph = new graphDraw(this.canvas, 1)
+    this.drawGraph = new graphDraw(this.canvas)
     this.colors = ["#ff0000", "#D28F4C", "#F38E05"];
 
     this.drawGraph.resetCanvas();
+  }
+
+  public resetPos() {
+    this.drawGraph.offsetXset = 0;
+    this.drawGraph.offsetYset = 0;
   }
 
   public handleMouseDown = (event: MouseEvent) => {
@@ -41,25 +45,13 @@ export class graph {
     this.dragStartY = event.clientY;
   };
 
-  public resetPos() {
-    this.drawGraph.offsetXset = 0 - 200;
-    this.drawGraph.offsetYset = 0;
-  }
-
-  set dragStartXSet(val: number) {
-    this.dragStartX = val;
-    this.drawGraph.offsetXset = val;
-
-  }
-  set dragStartYSet(val: number) {
-    this.dragStartY = val;
-    this.drawGraph.offsetYset = val;
-  }
-
   public handleMouseUp = () => this.isDragging = false;
 
   public handleMouseMove = (event: MouseEvent) => {
+    // this.drawGraph.mouseSet = Vec2.fromOffsetXY(event);
     if (!this.isDragging) return
+
+
     const deltaX = event.clientX - this.dragStartX;
     const deltaY = event.clientY - this.dragStartY;
 
@@ -84,42 +76,42 @@ export class graph {
   }
 
   public formulaGraph(val: string, indexInput: number) {
+    var correctFormla: string = val;
+
+    var typeFunc: string = "x";
+    if (correctFormla.includes("=")) {
+      const parts: string[] = correctFormla.split("=");
+      typeFunc = parts[0].trim();
+      correctFormla = parts[1].trim();
+    }
+
+    const replacements: { [key: string]: string } = {
+      "pi": "Math.PI",
+      "sin": "Math.sin",
+      "arcsin": "Math.asin",
+      "cos": "Math.cos",
+      "arccos": "Math.acos",
+      "abs": "Math.abs",
+      "e": "Math.E",
+      "\\^": "**",
+      "tg": "Math.tan",
+      "arctg": "Math.atan",
+      "ctg": "1/Math.tan",
+      "arcctg": "Math.PI / 2 - Math.atan",
+      "ln": "Math.log",
+      "log": "Math.log",
+      "sqrt": "Math.sqrt"
+    };
+
+    for (const key in replacements) {
+      if (Object.prototype.hasOwnProperty.call(replacements, key)) {
+        const regexPattern: RegExp = new RegExp(`\\b${key}\\b`, "g");
+        correctFormla = correctFormla.replace(regexPattern, replacements[key]);
+      }
+    }
+    console.log(val, correctFormla);
+
     try {
-      var correctFormla : string = val;
-
-      var typeFunc: string = "x";
-      if (correctFormla.includes("=")) {
-        const parts: string[] = correctFormla.split("=");
-        typeFunc = parts[0].trim();
-        correctFormla = parts[1].trim();
-      }
-
-      const replacements: { [key: string]: string } = {
-        "pi": "Math.PI",
-        "sin": "Math.sin",
-        "arcsin" : "Math.asin",
-        "abs" : "Math.abs",
-        "cos": "Math.cos",
-        "arccos" : "Math.acos",
-        "e": "Math.E",
-        "\\^": "**",
-        "tg": "Math.tan",
-        "arctg" : "Math.atan",
-        "ctg": "1/Math.tan",
-        "arcctg" : "Math.PI / 2 - Math.atan",
-        "ln": "Math.log",
-        "log": "Math.log",
-        "sqrt" : "Math.sqrt"
-
-      };
-
-      for (const key in replacements) {
-        if (Object.prototype.hasOwnProperty.call(replacements, key)) {
-          const regexPattern: RegExp = new RegExp(`\\b${key}\\b`, "g");
-          correctFormla = correctFormla.replace(regexPattern, replacements[key]);
-        }
-      }
-
       var func = new Function('x', 'return ' + correctFormla);
 
       var checkFun = func(1);
@@ -129,7 +121,6 @@ export class graph {
           color: "#ff0",
           graphFormula: null
         };
-        this.start();
         throw new Error("Invalid function");
       }
 
@@ -138,16 +129,14 @@ export class graph {
         color: this.colors[indexInput] ?? '#33f',
         graphFormula: func
       }
-
-      this.start();
     } catch (error) {
       console.log(error);
+    } finally  {
+      this.start();
     }
   }
   set funcSet(val: any[]) { this.funcs = val; }
   get funcGet() { return this.funcs }
-
-  public setSizeCanvas() { this.drawGraph.setSizeCanvas(); }
 
   public start() {
     this.drawGraph.resetCanvas();

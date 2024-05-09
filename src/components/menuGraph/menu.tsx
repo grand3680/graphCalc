@@ -1,6 +1,7 @@
 import { type FC, DragEvent, useContext, useEffect, useState } from "react";
 import styles from "./styles/graphMenu.module.scss";
 import MyContext from "../MyContext";
+import homeIcon from "../../icons/home.png"
 
 import {
   handleAddInput,
@@ -121,7 +122,7 @@ const GraphComponent: FC = () => {
         </button>
       </div>
       <button onClick={onClickHome} className={styles.HomePage}>
-        X
+        <img src={homeIcon} alt="" />
       </button>
     </>
   );

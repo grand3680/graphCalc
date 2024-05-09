@@ -25,7 +25,7 @@ export class graphDraw {
   public offsetY: number;
   public sizeAxis: number;
   // tuple {x, y} width \ heigh canvas
-  public size : Vec2;
+  public size : Vec2 = new Vec2();
   public mouse : Vec2 = new Vec2();
 
   set offsetXplus(val: number) { this.offsetX += val };
@@ -38,7 +38,8 @@ export class graphDraw {
   get scaleNumGet() { return this.scale }
   get sizeGet() { return this.size}
 
-  constructor(canvas: HTMLCanvasElement, scaleNum: number) {
+  set mouseSet(val : Vec2) { this.mouse = val;}
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
 
@@ -46,10 +47,10 @@ export class graphDraw {
     this.offsetY = 0;
     this.sizeAxis = 20;
 
-    this.size = new Vec2(Vec2.fromOffsetSize(this.canvas));
-
+    this.setSizeCanvas();
+    
     this.widthGrap = 5;
-    this.scale = scaleNum;
+    this.scale = 1;
 
     this.centreGrap = 10;
   }
@@ -69,17 +70,26 @@ export class graphDraw {
 
     this.scale = scale;
 
-    mouse = mouse
+    mouse
       .cminus(size)
       .minus(this.offsetX, this.offsetY)
       .cdiv(this.scale)
       .minus(start)
-      .times(this.scale)
+      .times(this.scale) 
       .plus(this.offsetX, this.offsetY)
+    
+    // this.offsetXset = ((mouse.x) / 5 );
+    // this.offsetXset = ((mouse.y) / 5);
   }
 
   public setSizeCanvas() {
     this.size = Vec2.fromOffsetSize(this.canvas);
+
+    const {x : Width, y : Height} = this.size;
+
+    this.canvas.width = Width;
+    this.canvas.height = Height;
+
     this.resetCanvas();
   }
 

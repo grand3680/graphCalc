@@ -1,26 +1,29 @@
 .graphBlock {
-    width: 100%;
-    height: 100%;
+    height: 100vh;
+    display: flex;
+    order: 0;
+    display: flex;
+    flex-direction: row;
+    flex: 1 1;
+    order: 0;
+    height: calc(100vh - 50px);
 }
 
 .canvasBlock {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    // position: relative;
+    flex: 1;
+    &>canvas {
+        width: 100%;
+        height: 100%;
+        background: #222;
+        overflow: hidden;
+    }
 }
 
-.graphBlock {
-    display: flex;
-    justify-content: space-between;
-}
-
-.CanvasEl {
-    display: block;
-    position: absolute;
-    border: none;
-    inset: 0px;
-    background: #222;
-    overflow: hidden;
-    top: 0;
-    left: 0;
+.graph-container {
+    flex: 1;
+    &>canvas {
+        width: 100%;
+        height: 100%;
+    }
 }
