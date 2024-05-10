@@ -1,7 +1,7 @@
 import { type FC, DragEvent, useContext, useEffect, useState } from "react";
 import styles from "./styles/graphMenu.module.scss";
 import MyContext from "../MyContext";
-import homeIcon from "../../icons/home.png"
+import homeIcon from "../../icons/home.png";
 
 import {
   handleAddInput,
@@ -80,26 +80,23 @@ const GraphComponent: FC = () => {
     <>
       <div className={styles.graphBlockInput}>
         {inputs.map((input, index) => (
-          <div
-            key={index}
-            className={styles.inputWrapper}
-            draggable
-            onDragStart={(e) => handleDragStart(index, e)}
-            onDragOver={(e) => handleDragOver(index, e)}
-            onDrop={(e) => handleDrop(index, e)}
-          >
+          <div key={index} className={styles.inputWrapper}>
             <div className={styles.inputBlock}>
-              <button className={styles.inputHandler}>
+              <div
+                className={styles.inputHandler}
+                draggable
+                onDragStart={(e) => handleDragStart(index, e)}
+                onDragOver={(e) => handleDragOver(index, e)}
+                onDrop={(e) => handleDrop(index, e)}
+              >
+                <span className={styles.countFun}>{index + 1}</span>
                 <button
                   className={
-                    input[1] == true
-                      ? styles.activeGraph
-                      : styles.disabletGraph
+                    input[1] == true ? styles.activeGraph : styles.disabletGraph
                   }
                   onClick={() => clickSettings(index)}
-                >
-                </button>
-              </button>
+                ></button>
+              </div>
               <input
                 className={styles.graphInput}
                 value={input[0]}
@@ -120,9 +117,12 @@ const GraphComponent: FC = () => {
         <button className={styles.addButton} onClick={handleAddInputClick}>
           Add
         </button>
+        {/* <div className={styles.hiddenMenu}>
+          <span>back</span>
+        </div> */}
       </div>
       <button onClick={onClickHome} className={styles.HomePage}>
-        <img src={homeIcon} alt="" />
+        <img src={homeIcon} alt="home" />
       </button>
     </>
   );

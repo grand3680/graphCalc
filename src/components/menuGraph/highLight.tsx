@@ -8,7 +8,7 @@ interface HighlightProps {
 const HighlightConverter: FC<HighlightProps> = ({ expression }) => {
   const convertExpression = (expression: string): JSX.Element => {
     let converted = expression.replace(
-      /\^(\d+)/g,
+      /\^\((.+?)\)/g,
       (_, group) => `<sup>${group}</sup>`
     );
     converted = converted.replace(

@@ -1,23 +1,39 @@
-.graphBlockInput {
-    // width: 400px;
-    // height: 100vh;
-    background-color: #212120;
-    // display: block;
-    border-right: 1px solid #333333;
-    overflow-x: hidden;
-    overflow-y: auto;
-    flex: 0 1 400px;
+.addButton,
+.deleteButton {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 8px;
 }
 
-.inputBlock {
-    width: 100%;
-    height: 75px;
-    display: flex;
-    direction: row;
+.countFun {
+    font-size: 20px;
+    color: #fff;
+    position: absolute;
+    padding: 0 2px;
+    top: 0;
+    left: 0;
+}
+
+.activeGraph {
+    background-color: rgb(112, 181, 212);
+}
+
+.disabletGraph {
+    opacity: 0.8;
 }
 
 .inputHandler {
     background-color: #b39e9e;
+    border: none;
     color: white;
     height: 100%;
     width: 40px;
@@ -36,29 +52,15 @@
     }
 }
 
-.addButton,
-.deleteButton {
-    background-color: #4CAF50;
-    /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    border-radius: 8px;
-}
-
-.activeGraph {
-    background-color: rgb(112, 181, 212);
-}
-
-.disabletGraph {
-    opacity: 0.8;
+.inputBlock,
+.inputHandler:focus {
+    &:focus {
+        outline: none;
+        border: 1px #D8D8D8 solid;
+        .inputHandler {
+            background-color: red !important;
+        }
+    }
 }
 
 .graphInput {
@@ -66,9 +68,13 @@
     height: 100%;
     display: block;
     background-color: #ffffffa1;
+    border: 1px #D8D8D8 solid;
     border-bottom: #956C2D 3px solid;
     padding: 5px 10px;
     text-align: start;
+    &:focus {
+        outline: none;
+    }
 }
 
 .inputWrapper {

@@ -1,23 +1,15 @@
 import { Vec2 } from '../../../utils/vec2';
-import { drawAxis, drawGraph, findIntersectionPoints } from './index';
-
-
-interface funG {
-  typeFun : string,
-  color : string,    
-  graphFormula: (val: number) => number,
-}
-
+import { drawAxis, drawGraph, drawIntersection, findIntersectionPoints } from './index';
 
 export class graphDraw {
-  protected drawAxis = drawAxis;
-  protected drawGraph = drawGraph;
   protected findIntersectionPoints = findIntersectionPoints;
+  protected drawIntersection = drawIntersection;
+  public drawGraph = drawGraph;
+  public drawAxis = drawAxis;
 
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
 
-  protected widthGrap: number;
   protected scale: number;
   protected centreGrap: number;
 
@@ -25,20 +17,23 @@ export class graphDraw {
   public offsetY: number;
   public sizeAxis: number;
   // tuple {x, y} width \ heigh canvas
-  public size : Vec2 = new Vec2();
-  public mouse : Vec2 = new Vec2();
+  public size: Vec2 = new Vec2();
+  public mouse: Vec2 = new Vec2();
 
   set offsetXplus(val: number) { this.offsetX += val };
   set offsetYplus(val: number) { this.offsetY += val };
 
   set offsetXset(val: number) { this.offsetX = val };
-  set offsetYset(val: number) { this.offsetY = val };
+  set offsetYset(val: number) { this.offsetY = val }
+
+  get offsetXget() { return this.offsetX };
+  get offsetYget() { return this.offsetY };
 
   set sizeAxisSet(val: number) { this.sizeAxis = val }
   get scaleNumGet() { return this.scale }
-  get sizeGet() { return this.size}
+  get sizeGet() { return this.size }
 
-  set mouseSet(val : Vec2) { this.mouse = val;}
+  set mouseSet(val: Vec2) { this.mouse = val; }
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
@@ -48,14 +43,13 @@ export class graphDraw {
     this.sizeAxis = 20;
 
     this.setSizeCanvas();
-    
-    this.widthGrap = 5;
+
     this.scale = 1;
 
     this.centreGrap = 10;
   }
 
-  public clearCanvas() {
+  protected clearCanvas() {
     const { x: width, y: height } = this.size;
 
     this.ctx.clearRect(0, 0, width, height);
@@ -71,34 +65,25 @@ export class graphDraw {
     this.scale = scale;
 
     mouse
-      .cminus(size)
+      .minus(size)
       .minus(this.offsetX, this.offsetY)
-      .cdiv(this.scale)
+      .div(this.scale)
       .minus(start)
-      .times(this.scale) 
+      .times(this.scale)
       .plus(this.offsetX, this.offsetY)
-    
-    // this.offsetXset = ((mouse.x) / 5 );
-    // this.offsetXset = ((mouse.y) / 5);
+
+    this.offsetXset = mouse.x;
+    this.offsetYset = mouse.y;
   }
 
   public setSizeCanvas() {
     this.size = Vec2.fromOffsetSize(this.canvas);
 
-    const {x : Width, y : Height} = this.size;
+    const { x: Width, y: Height } = this.size;
 
     this.canvas.width = Width;
     this.canvas.height = Height;
 
-    this.resetCanvas();
-  }
-
-  public resetCanvas() {
     this.drawAxis();
   }
-
-  public graphDraawing( funcG2 : funG) {
-    this.drawGraph(funcG2);
-  }
-
 }

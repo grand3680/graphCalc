@@ -29,14 +29,39 @@ export class graph {
     ];
 
     this.drawGraph = new graphDraw(this.canvas)
-    this.colors = ["#ff0000", "#D28F4C", "#F38E05"];
+    this.colors = ["#ff0000", "#D28F4C", "#3D8F4A", "#674AAA", "#FEFEFE", "#38BBBF", "#C773B9"];
 
-    this.drawGraph.resetCanvas();
+    this.drawGraph.drawAxis();
   }
 
   public resetPos() {
-    this.drawGraph.offsetXset = 0;
-    this.drawGraph.offsetYset = 0;
+    const easingFactor = 0.1;
+    var offsetX: number = this.drawGraph.offsetXget;
+    var offsetY: number = this.drawGraph.offsetYget;
+
+    if ((Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) || this.isDragging) return;
+
+
+    var smoothResetPosition = () => {
+      if (this.isDragging) {
+        clearInterval(animationInterval);
+        return
+      }
+      offsetX -= offsetX * easingFactor;
+      offsetY -= offsetY * easingFactor;
+
+      this.drawGraph.offsetXset = offsetX;
+      this.drawGraph.offsetYset = offsetY;
+
+      // Check if offsets are close enough to zero to stop the animation
+      if (Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) {
+        this.drawGraph.offsetXset = 0;
+        this.drawGraph.offsetYset = 0;
+        clearInterval(animationInterval);
+      }
+      this.start();
+    }
+    const animationInterval = setInterval(smoothResetPosition, 16);
   }
 
   public handleMouseDown = (event: MouseEvent) => {
@@ -48,7 +73,7 @@ export class graph {
   public handleMouseUp = () => this.isDragging = false;
 
   public handleMouseMove = (event: MouseEvent) => {
-    // this.drawGraph.mouseSet = Vec2.fromOffsetXY(event);
+    this.drawGraph.mouseSet = Vec2.fromOffsetXY(event);
     if (!this.isDragging) return
 
 
@@ -78,41 +103,46 @@ export class graph {
   public formulaGraph(val: string, indexInput: number) {
     var correctFormla: string = val;
 
-    var typeFunc: string = "x";
+    var typeFunc: string = "y";
     if (correctFormla.includes("=")) {
       const parts: string[] = correctFormla.split("=");
       typeFunc = parts[0].trim();
       correctFormla = parts[1].trim();
     }
 
+
     const replacements: { [key: string]: string } = {
       "pi": "Math.PI",
-      "sin": "Math.sin",
-      "arcsin": "Math.asin",
-      "cos": "Math.cos",
-      "arccos": "Math.acos",
-      "abs": "Math.abs",
       "e": "Math.E",
       "\\^": "**",
-      "tg": "Math.tan",
-      "arctg": "Math.atan",
-      "ctg": "1/Math.tan",
-      "arcctg": "Math.PI / 2 - Math.atan",
-      "ln": "Math.log",
-      "log": "Math.log",
-      "sqrt": "Math.sqrt"
+      "abs\\(([^)]+)\\)": "(Math.abs($1))",
+      "\\|([^|]+)\\|": "(Math.abs($1))",
+      "sqrt\\(([^)]+)\\)": "(Math.sqrt($1))",
+      "ln\\(([^)]+)\\)": "(Math.log($1))",
+      "log\\(([^),]+),([^)]+)\\)": "(Math.log($1)/Math.log($2))",
+
+      "arcsin\\(([^)]+)\\)": "(Math.asin($1))",
+      "arccos\\(([^)]+)\\)": "(Math.acos($1))",
+      "arctg\\(([^)]+)\\)": "(Math.atan($1))",
+      "arcctg\\(([^)]+)\\)": "(Math.PI/2-Math.atan($1))",
+
+      "(?:^|(?<=[+\\-*/]))sin\\(([^)]+)\\)": "(Math.sin($1))",
+      "(?:^|(?<=[+\\-*/]))cos\\(([^)]+)\\)": "(Math.cos($1))",
+      "(?:^|(?<=[+\\-*/]))tg\\(([^)]+)\\)": "(Math.tan($1))",
+      "(?:^|(?<=[+\\-*/]))ctg\\(([^)]+)\\)": "(1/Math.tan($1))",
     };
 
     for (const key in replacements) {
       if (Object.prototype.hasOwnProperty.call(replacements, key)) {
-        const regexPattern: RegExp = new RegExp(`\\b${key}\\b`, "g");
+        const regexPattern: RegExp = new RegExp(`${key}`, "g");
         correctFormla = correctFormla.replace(regexPattern, replacements[key]);
       }
     }
+
     console.log(val, correctFormla);
 
     try {
-      var func = new Function('x', 'return ' + correctFormla);
+      var func = new Function(typeFunc == "x" ? "y" : "x", 'return ' + correctFormla);
 
       var checkFun = func(1);
       if (typeof checkFun !== "number") {
@@ -131,7 +161,7 @@ export class graph {
       }
     } catch (error) {
       console.log(error);
-    } finally  {
+    } finally {
       this.start();
     }
   }
@@ -139,12 +169,11 @@ export class graph {
   get funcGet() { return this.funcs }
 
   public start() {
-    this.drawGraph.resetCanvas();
+    this.drawGraph.drawAxis();
     for (var i = 0; i < this.funcs.length; i++) {
       if (this.funcs[i].graphFormula === null) continue;
 
-
-      this.drawGraph.graphDraawing(this.funcs[i]);
+      this.drawGraph.drawGraph(this.funcs[i]);
     }
   }
 }

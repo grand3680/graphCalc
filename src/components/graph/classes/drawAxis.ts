@@ -6,7 +6,7 @@ export function drawAxis(this: graphDraw): void {
   var scale = this.scale;
 
   const { x: X, y: Y } = this.size.cdiv(scale).cdiv(2);
-  this.sizeAxisSet = Math.max(10, precision(Math.min(X, Y) / 5, 5));
+  this.sizeAxisSet = Math.max(5, precision(Math.min(X, Y) / 5, 5));
 
   var dX = this.offsetX;
   var dY = this.offsetY;
@@ -95,32 +95,32 @@ export function drawAxis(this: graphDraw): void {
       let text =  ` ${x / 10} `;
       // delete float at the higt scale
       if (Math.abs(startPosX / 10) > 20) text = ` ${x / 10 | 0} `;
-
       const { hangingBaseline } = this.ctx.measureText(text); // check height txt
 
       // min to 0 of x and max to + hangingBaseline
-      this.ctx.fillText(text, x, minMax(0, -Y - aY + hangingBaseline, Y - aY));
+      this.ctx.fillText(text, x, minMax(1.5*hangingBaseline, -Y - aY + hangingBaseline, Y - aY));
     }
 
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
+    
     let startPosY = precision(-Y - aY - size, size)
     for (let y = startPosY; y <= Y - aY; y += size) {
       if (y == 0) continue;
-
       let text = ` ${-y / 10} `;
       // delete float at the higt scale
       if (Math.abs(startPosY / 10) > 20) text = ` ${-y / 10 | 0} `;
-      
       const { width } = this.ctx.measureText(text); // check width txt
 
-      // min to 0 of y and max to + width
-      this.ctx.fillText(text, minMax(0, -X - aX, X - aX - width), y);
+      // min to -width of y and max to + width
+      this.ctx.fillText(text, minMax(-width, -X - aX, X - aX - width), y);
     }
 
 
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'bottom';
-    this.ctx.fillText(` 0 `, 0, 0);
+    let zeroText = ` 0 `;
+    const { width } = this.ctx.measureText(zeroText)
+    this.ctx.fillText(zeroText, -width, width);
   }
 }
