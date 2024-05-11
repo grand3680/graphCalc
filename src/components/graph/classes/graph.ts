@@ -1,5 +1,5 @@
 import { graphDraw } from "./index";
-import { minMax } from "../../../utils/mathCalc"
+import { gamma, minMax } from "../../../utils/mathCalc"
 import { Vec2 } from "../../../utils/vec2";
 
 
@@ -130,6 +130,10 @@ export class graph {
       "(?:^|(?<=[+\\-*/]))cos\\(([^)]+)\\)": "(Math.cos($1))",
       "(?:^|(?<=[+\\-*/]))tg\\(([^)]+)\\)": "(Math.tan($1))",
       "(?:^|(?<=[+\\-*/]))ctg\\(([^)]+)\\)": "(1/Math.tan($1))",
+
+      "(\\w+)!": "frac($1)",
+      "\\(([^)]+)\\)!": "frac($1)",
+
     };
 
     for (const key in replacements) {
@@ -142,10 +146,18 @@ export class graph {
     console.log(val, correctFormla);
 
     try {
-      var func = new Function(typeFunc == "x" ? "y" : "x", 'return ' + correctFormla);
+      const envFun = {
+        frac: gamma
+      };
 
-      var checkFun = func(1);
-      if (typeof checkFun !== "number") {
+      var funcsKey = [...Object.keys(envFun)]
+      var funcsVal = [...Object.values(envFun)]
+
+      var func = new Function(...funcsKey, typeFunc == "x" ? "y" : "x", 'return ' + correctFormla).bind(null, ...funcsVal);
+
+      var checkFunc = func(1);
+      console.log(checkFunc, typeof checkFunc !== "number");
+      if (typeof checkFunc !== "number") {
         this.funcs[indexInput] = {
           typeFun: "x",
           color: "#ff0",
@@ -157,7 +169,7 @@ export class graph {
       this.funcs[indexInput] = {
         typeFun: typeFunc,
         color: this.colors[indexInput] ?? '#33f',
-        graphFormula: func
+        graphFormula: func,
       }
     } catch (error) {
       console.log(error);
