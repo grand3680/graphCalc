@@ -4,6 +4,9 @@
     overflow-x: hidden;
     overflow-y: auto;
     flex: 0 1 400px;
+    position: relative;
+    transition: flex 0.5s ease;
+    flex-wrap: nowrap;
 }
 
 .inputBlock {

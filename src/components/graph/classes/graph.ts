@@ -89,11 +89,29 @@ export class graph {
 
   };
 
-  public wheelEvent(event: WheelEvent) {
-    var scale = this.drawGraph.scaleNumGet;
+  public calcScale(dY : number) : number {
+    var s = this.drawGraph.scaleNumGet;
+    return minMax(s - dY * s * 0.001, .01, 100)
+  }
 
+  public scaleClick(dY : number) {
+    var i = 5;
+
+    var smoothScale = () => {
+      i = i - 1;
+  
+      if (i <= 0) {
+        clearInterval(animationInterval);
+      }
+      this.drawGraph.sclaeNumSet = this.calcScale(dY * i);
+      this.start();
+    }
+    const animationInterval = setInterval(smoothScale, 16);
+  }
+
+  public wheelEvent(event: WheelEvent) {
     this.drawGraph.toScale(
-      minMax(scale - event.deltaY * scale * 0.001, .01, 100),
+      this.calcScale(event.deltaY),
       Vec2.fromOffsetXY(event)
     )
 

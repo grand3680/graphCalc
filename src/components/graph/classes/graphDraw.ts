@@ -30,6 +30,7 @@ export class graphDraw {
   get offsetYget() { return this.offsetY };
 
   set sizeAxisSet(val: number) { this.sizeAxis = val }
+  set sclaeNumSet(val : number) {this.scale = val}
   get scaleNumGet() { return this.scale }
   get sizeGet() { return this.size }
 
@@ -62,7 +63,7 @@ export class graphDraw {
       .minus(this.offsetX, this.offsetY)
       .cdiv(this.scale);
 
-    this.scale = scale;
+    this.sclaeNumSet = scale;
 
     mouse
       .minus(size)
