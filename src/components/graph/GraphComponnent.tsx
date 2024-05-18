@@ -5,21 +5,25 @@ import styles from "./styles/graph.module.scss";
 import MyContext from "../MyContext";
 import Menu from "../menuGraph/menu";
 
+type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
+type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
+
 export const GraphComponnent: FC = () => {
   const canvasRef = useRef(null);
   const { graph: GraphInst, updateContext } = useContext(MyContext);
 
-  var mousedown = (e: any) => {
+
+  var onDragdown = (e: TouchEventT | MouseEventT) => {
     if (!GraphInst) return;
-    GraphInst.handleMouseDown(e);
+    GraphInst.handleDragDown(e);
   };
-  var onMouseUp = () => {
+  var onDragUp = () => {
     if (!GraphInst) return;
-    GraphInst.handleMouseUp();
+    GraphInst.handleDragUp();
   };
-  var onMouseMove = (e: any) => {
+  var onDragMove = (e: TouchEventT | MouseEventT) => {
     if (!GraphInst) return;
-    GraphInst.handleMouseMove(e);
+    GraphInst.handleDragMove(e);
   };
 
   useEffect(() => {
@@ -27,6 +31,15 @@ export const GraphComponnent: FC = () => {
     if (!canvas) return;
     var graphInstan = new graph(canvas);
     updateContext(graphInstan);
+
+    const onResize = () => {
+      if (!GraphInst) return;
+      GraphInst.drawGraph.setSizeCanvas();
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -45,12 +58,17 @@ export const GraphComponnent: FC = () => {
   return (
     <>
       <div className={styles.graphBlock}>
-        <Menu />
+        <div className={styles.MenuBlock}>
+          <Menu />
+        </div>
         <div className={styles.canvasBlock}>
           <canvas
-            onMouseDown={(e) => mousedown(e)}
-            onMouseUp={() => onMouseUp()}
-            onMouseMove={(e) => onMouseMove(e)}
+            onMouseDown={(e) => onDragdown(e)}
+            onMouseUp={() => onDragUp()}
+            onMouseMove={(e) => onDragMove(e)}
+            onTouchStart={(e) => onDragdown(e)}
+            onTouchEnd={() => onDragUp()}
+            onTouchMove={(e) => onDragMove(e)}
             ref={canvasRef}
           />
         </div>

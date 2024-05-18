@@ -6,7 +6,10 @@ export function drawAxis(this: graphDraw): void {
   var scale = this.scale;
 
   const { x: X, y: Y } = this.size.cdiv(scale).cdiv(2);
+  if (!isFinite(X) || !isFinite(Y)) return;
+
   this.sizeAxisSet = Math.max(5, precision(Math.min(X, Y) / 5, 5));
+
 
   var dX = this.offsetX;
   var dY = this.offsetY;
@@ -24,48 +27,123 @@ export function drawAxis(this: graphDraw): void {
   this.clearCanvas();
   this.ctx.setTransform(scale, 0, 0, scale, ...center.tuple);
 
-
-  // Grid
-  this.ctx.beginPath();
-  {
-    for (let x = precision(-X - aX - size, size); x <= X - aX; x += size) {
-      this.ctx.moveTo(x, -Y - aY);
-      this.ctx.lineTo(x, Y - aY);
+  if (this.typeGrid == "polar") {
+    const maxRadius = Math.sqrt(Math.pow(X + Math.abs(aX), 2) + Math.pow(Y + Math.abs(aY), 2));
+    // Draw concentric circles
+    this.ctx.beginPath();
+    for (let radius = size; radius <= maxRadius; radius = precision(radius + size, size)) {
+      this.ctx.moveTo(radius, 0);
+      this.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     }
-    
-    for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += size) {
-      this.ctx.moveTo(-X - aX, y);
-      this.ctx.lineTo(X - aX, y);
-    }
-    
     this.ctx.lineWidth = 1 / scale;
     this.ctx.strokeStyle = '#666666';
-    this.ctx.fillStyle = "#666666";
     this.ctx.stroke();
-  }
-  this.ctx.closePath();
+    this.ctx.closePath();
 
 
-  // small Grid 
-  this.ctx.beginPath();
-  {
-    for (let x = precision(-X - aX - size, size); x <= X - aX; x += size / 5) {
-      this.ctx.moveTo(x, -Y - aY);
-      this.ctx.lineTo(x, Y - aY);
+    this.ctx.fillStyle = '#fff';
+    this.ctx.font = `${20 / scale}px monospace`;
+    {
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'bottom';
+
+      for (let i = 0; i < 20; i++) {
+        const angle = (i / 20) * (2 * Math.PI);
+        const x = precision(Math.max(maxRadius - size * 2, maxRadius / 2), size) * Math.cos(angle);
+        const y = precision(Math.max(maxRadius - size * 2, maxRadius / 2), size) * Math.sin(angle);
+
+        const angleInDegrees = (angle * (180 / Math.PI)).toFixed(0) + '°';
+        this.ctx.fillText(angleInDegrees, x, y);
+      }
+
+      this.ctx.textAlign = 'right';
+      this.ctx.textBaseline = 'middle';
     }
-    
-    for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += size / 5) {
-      this.ctx.moveTo(-X - aX, y);
-      this.ctx.lineTo(X - aX, y);
+
+    // Draw smaller concentric circles
+    this.ctx.beginPath();
+    for (let radius = size / 5; radius <= maxRadius; radius += precision(radius + size / 5, size / 5)) {
+      this.ctx.moveTo(radius, 0);
+      this.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     }
-    
     this.ctx.lineWidth = 0.5 / scale;
     this.ctx.strokeStyle = '#3A3A3A';
-    this.ctx.fillStyle = "#3A3A3A";
     this.ctx.stroke();
-  }
-  this.ctx.closePath();
+    this.ctx.closePath();
 
+    // Draw radial lines
+    this.ctx.beginPath();
+    const numRadialLines = 20;  // Number of radial lines
+    for (let i = 0; i < numRadialLines; i++) {
+      const angle = (i / numRadialLines) * (2 * Math.PI);
+      const x = maxRadius * Math.cos(angle);
+      const y = maxRadius * Math.sin(angle);
+      this.ctx.moveTo(0, 0);
+      this.ctx.lineTo(x, y);
+    }
+    this.ctx.lineWidth = 0.75 / scale;
+    this.ctx.strokeStyle = '#666666';
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    // Draw smaller radial lines
+    this.ctx.beginPath();
+    const numSmallRadialLines = numRadialLines * 6;  // Number of radial lines
+    for (let i = 0; i < numSmallRadialLines; i++) {
+      const angle = (i / numSmallRadialLines) * 2 * Math.PI;
+      const x = maxRadius * Math.cos(angle);
+      const y = maxRadius * Math.sin(angle);
+      this.ctx.moveTo(0, 0);
+      this.ctx.lineTo(x, y);
+    }
+    this.ctx.lineWidth = 0.5 / scale;
+    this.ctx.strokeStyle = '#3A3A3A';
+    this.ctx.stroke();
+    this.ctx.closePath();
+  }
+
+
+  if (this.typeGrid == "grid") {
+    this.ctx.beginPath();
+    {
+      for (let x = precision(-X - aX - size, size); x <= X - aX; x += size) {
+        this.ctx.moveTo(x, -Y - aY);
+        this.ctx.lineTo(x, Y - aY);
+      }
+
+      for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += size) {
+        this.ctx.moveTo(-X - aX, y);
+        this.ctx.lineTo(X - aX, y);
+      }
+
+      this.ctx.lineWidth = 1 / scale;
+      this.ctx.strokeStyle = '#666666';
+      this.ctx.fillStyle = "#666666";
+      this.ctx.stroke();
+    }
+    this.ctx.closePath();
+
+
+    // small Grid 
+    this.ctx.beginPath();
+    {
+      for (let x = precision(-X - aX - size, size); x <= X - aX; x += size / 5) {
+        this.ctx.moveTo(x, -Y - aY);
+        this.ctx.lineTo(x, Y - aY);
+      }
+
+      for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += size / 5) {
+        this.ctx.moveTo(-X - aX, y);
+        this.ctx.lineTo(X - aX, y);
+      }
+
+      this.ctx.lineWidth = 0.5 / scale;
+      this.ctx.strokeStyle = '#3A3A3A';
+      this.ctx.fillStyle = "#3A3A3A";
+      this.ctx.stroke();
+    }
+    this.ctx.closePath();
+  }
 
   // Axies
   this.ctx.strokeStyle = '#733';
@@ -92,18 +170,18 @@ export function drawAxis(this: graphDraw): void {
     let startPosX = precision(-X - aX - size, size);
     for (let x = startPosX; x <= X - aX; x += size) {
       if (x == 0) continue;
-      let text =  ` ${x / 10} `;
+      let text = ` ${x / 10} `;
       // delete float at the higt scale
       if (Math.abs(startPosX / 10) > 20) text = ` ${x / 10 | 0} `;
       const { hangingBaseline } = this.ctx.measureText(text); // check height txt
 
       // min to 0 of x and max to + hangingBaseline
-      this.ctx.fillText(text, x, minMax(1.5*hangingBaseline, -Y - aY + hangingBaseline, Y - aY));
+      this.ctx.fillText(text, x, minMax(1.5 * hangingBaseline, -Y - aY + hangingBaseline, Y - aY));
     }
 
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
-    
+
     let startPosY = precision(-Y - aY - size, size)
     for (let y = startPosY; y <= Y - aY; y += size) {
       if (y == 0) continue;

@@ -147,6 +147,7 @@ export class Vec2 {
     return vec.set(offset.offsetX, offset.offsetY);
   }
 
+
   cdiv(...args: TParameter) {
     return this.clone().div(...args);
   }

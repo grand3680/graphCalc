@@ -7,7 +7,7 @@ export const handleAddInput = (
   inputs: inputsT,
   setInputs: Dispatch<SetStateAction<inputsT>>
 ) => {
-  setInputs([...inputs, ["", false]]);
+  setInputs([...inputs, ["", true]]);
 };
 
 export const handleDeleteInput = (

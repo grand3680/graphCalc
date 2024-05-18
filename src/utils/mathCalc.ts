@@ -19,6 +19,8 @@ export const derivative = (func: (x: number) => number, x: number, h: number = 0
 }
 
 export var gamma = (x: number): number => {
+    if (Number.isInteger(x)) return frac(x);
+  
     // Lanczos approximation constants
     const g = 7;
     const p = [

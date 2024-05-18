@@ -1,6 +1,12 @@
 import { Vec2 } from '../../../utils/vec2';
 import { drawAxis, drawGraph, drawIntersection, findIntersectionPoints } from './index';
 
+interface typeFuncT {
+  typeFun: string,
+  color: string,
+  graphFormula: any
+}
+
 export class graphDraw {
   protected findIntersectionPoints = findIntersectionPoints;
   protected drawIntersection = drawIntersection;
@@ -13,12 +19,16 @@ export class graphDraw {
   protected scale: number;
   protected centreGrap: number;
 
+  protected allDrawFuncs : Path2D[] = [];
   public offsetX: number;
   public offsetY: number;
   public sizeAxis: number;
   // tuple {x, y} width \ heigh canvas
   public size: Vec2 = new Vec2();
   public mouse: Vec2 = new Vec2();
+  public typeGrid : string = "grid";
+
+  set typeGridSet(val: string) { this.typeGrid = val };
 
   set offsetXplus(val: number) { this.offsetX += val };
   set offsetYplus(val: number) { this.offsetY += val };
@@ -30,7 +40,7 @@ export class graphDraw {
   get offsetYget() { return this.offsetY };
 
   set sizeAxisSet(val: number) { this.sizeAxis = val }
-  set sclaeNumSet(val : number) {this.scale = val}
+  set scaleeNumSet(val : number) {this.scale = val}
   get scaleNumGet() { return this.scale }
   get sizeGet() { return this.size }
 
@@ -56,6 +66,12 @@ export class graphDraw {
     this.ctx.clearRect(0, 0, width, height);
   }
 
+  public drawGraphFuns(funcs: Array<typeFuncT>) {
+    for (var i = 0; i < funcs.length; i++) {
+      this.drawGraph(funcs[i]);
+    }
+  }
+
   public toScale(scale: number, mouse = this.mouse) {
     const size = this.size.cdiv(2);
     const start = mouse
@@ -63,7 +79,7 @@ export class graphDraw {
       .minus(this.offsetX, this.offsetY)
       .cdiv(this.scale);
 
-    this.sclaeNumSet = scale;
+    this.scaleeNumSet = scale;
 
     mouse
       .minus(size)

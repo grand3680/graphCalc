@@ -2,6 +2,8 @@ import { graphDraw } from "./index";
 import { gamma, minMax } from "../../../utils/mathCalc"
 import { Vec2 } from "../../../utils/vec2";
 
+type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
+type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 
 export class graph {
   public canvas: HTMLCanvasElement;
@@ -11,6 +13,7 @@ export class graph {
 
   public dragStartX: number = 0;
   public dragStartY: number = 0;
+  private initialDistance: number | null = 0;
 
   public funcs: {
     typeFun: string,
@@ -64,62 +67,125 @@ export class graph {
     const animationInterval = setInterval(smoothResetPosition, 16);
   }
 
-  public handleMouseDown = (event: MouseEvent) => {
+  public getClientRect(event: MouseEventT | TouchEventT): [any, any] {
+    let clientX: number | null = null;
+    let clientY: number | null = null;
+
+    if ('touches' in event) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else {
+      clientX = event.clientX;
+      clientY = event.clientY;
+    }
+
+    return [clientX, clientY];
+  }
+
+
+  public handleDragDown = (event: TouchEventT | MouseEventT) => {
     this.isDragging = true;
-    this.dragStartX = event.clientX;
-    this.dragStartY = event.clientY;
+    var [clientX, clientY] = this.getClientRect(event);
+    if (!clientX || !clientY) return;
+
+    this.dragStartX = clientX;
+    this.dragStartY = clientY;
   };
 
-  public handleMouseUp = () => this.isDragging = false;
+  public handleDragUp = () => this.isDragging = false;
 
-  public handleMouseMove = (event: MouseEvent) => {
-    this.drawGraph.mouseSet = Vec2.fromOffsetXY(event);
-    if (!this.isDragging) return
+  public handleDragMove = (event: TouchEventT | MouseEventT) => {
+    if (!this.isDragging) return;
+    var [clientX, clientY] = this.getClientRect(event);
 
+    if (!clientX || !clientY) return;
+    // this.drawGraph.mouseSet = Vec2.fromOffsetXY(touch);
 
-    const deltaX = event.clientX - this.dragStartX;
-    const deltaY = event.clientY - this.dragStartY;
+    const deltaX = clientX - this.dragStartX;
+    const deltaY = clientY - this.dragStartY;
 
     this.drawGraph.offsetXplus = deltaX;
     this.drawGraph.offsetYplus = deltaY;
     this.start();
 
-    this.dragStartX = event.clientX;
-    this.dragStartY = event.clientY;
-
+    this.dragStartX = clientX;
+    this.dragStartY = clientY;
   };
 
-  public calcScale(dY : number) : number {
-    var s = this.drawGraph.scaleNumGet;
-    return minMax(s - dY * s * 0.001, .01, 100)
+  private vec2FromOffsetXY(event: WheelEvent | TouchEvent): Vec2 {
+    const x = 'offsetX' in event ? event.offsetX : event.touches[0].clientX;
+    const y = 'offsetY' in event ? event.offsetY : event.touches[0].clientY;
+    return Vec2.fromOffsetXY({ offsetX: x, offsetY: y });
   }
 
-  public scaleClick(dY : number) {
-    var i = 5;
-
-    var smoothScale = () => {
-      i = i - 1;
-  
-      if (i <= 0) {
-        clearInterval(animationInterval);
-      }
-      this.drawGraph.sclaeNumSet = this.calcScale(dY * i);
-      this.start();
-    }
-    const animationInterval = setInterval(smoothScale, 16);
-  }
 
   public wheelEvent(event: WheelEvent) {
     this.drawGraph.toScale(
       this.calcScale(event.deltaY),
-      Vec2.fromOffsetXY(event)
+      this.vec2FromOffsetXY(event)
+      // Vec2.fromOffsetXY(event)
     )
 
     this.start();
   }
 
+
+  private calculateDistance(touch1: Touch, touch2: Touch): number {
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  public touchStart(event: TouchEvent) {
+    if (event.touches.length === 2) {
+      this.initialDistance = this.calculateDistance(event.touches[0], event.touches[1]);
+    }
+  }
+
+  public touchMove(event: TouchEvent) {
+    if (event.touches.length !== 2 || !this.initialDistance) return;
+    var s = this.drawGraph.scaleNumGet;
+
+    const currentDistance = this.calculateDistance(event.touches[0], event.touches[1]);
+    const scale = currentDistance / this.initialDistance;
+    const adjustedScale = s * scale;
+
+    this.drawGraph.toScale(adjustedScale, this.vec2FromOffsetXY(event));
+    this.start();
+
+    this.drawGraph.scaleeNumSet = adjustedScale;
+  }
+
+  public touchEnd(event: TouchEvent) {
+    if (event.touches.length < 2) {
+      this.initialDistance = null;
+    }
+  }
+
+
+  public calcScale(dY: number): number {
+    var s = this.drawGraph.scaleNumGet;
+    return minMax(s - dY * s * 0.001, .01, 100)
+  }
+
+  public scaleClick(dY: number) {
+    var i = 5;
+
+    var smoothScale = () => {
+      i = i - 1;
+
+      if (i <= 0) {
+        clearInterval(animationInterval);
+      }
+      this.drawGraph.scaleeNumSet = this.calcScale(dY * i);
+      this.start();
+    }
+    const animationInterval = setInterval(smoothScale, 16);
+  }
+
+
   public formulaGraph(val: string, indexInput: number) {
-    var correctFormla: string = val;
+    var correctFormla: string = val.replaceAll(' ', '');
 
     var typeFunc: string = "y";
     if (correctFormla.includes("=")) {
@@ -127,7 +193,6 @@ export class graph {
       typeFunc = parts[0].trim();
       correctFormla = parts[1].trim();
     }
-
 
     const replacements: { [key: string]: string } = {
       "pi": "Math.PI",
@@ -151,7 +216,6 @@ export class graph {
 
       "(\\w+)!": "frac($1)",
       "\\(([^)]+)\\)!": "frac($1)",
-
     };
 
     for (const key in replacements) {
@@ -174,7 +238,7 @@ export class graph {
       var func = new Function(...funcsKey, typeFunc == "x" ? "y" : "x", 'return ' + correctFormla).bind(null, ...funcsVal);
 
       var checkFunc = func(1);
-      console.log(checkFunc, typeof checkFunc !== "number");
+
       if (typeof checkFunc !== "number") {
         this.funcs[indexInput] = {
           typeFun: "x",
@@ -200,10 +264,8 @@ export class graph {
 
   public start() {
     this.drawGraph.drawAxis();
-    for (var i = 0; i < this.funcs.length; i++) {
-      if (this.funcs[i].graphFormula === null) continue;
+      let funcses = this.funcs.filter(el => el.graphFormula !== null);
+      this.drawGraph.drawGraphFuns(funcses);
 
-      this.drawGraph.drawGraph(this.funcs[i]);
-    }
   }
 }

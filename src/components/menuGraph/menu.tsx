@@ -1,9 +1,7 @@
 import { type FC, DragEvent, useContext, useEffect, useState } from "react";
 import styles from "./styles/graphMenu.module.scss";
 import MyContext from "../MyContext";
-import homeIcon from "../../icons/home.png";
-import scalePlusIcon from "../../icons/scalePlus.png";
-import scaleMinusIcon from "../../icons/scaleMinus.png";
+import RightMenu from "./rightMenu";
 
 import {
   handleAddInput,
@@ -17,7 +15,7 @@ const GraphComponent: FC = () => {
   const [inputs, setInputs] = useState<Array<[string, boolean]>>([
     ["sin(x)", true],
     ["|x|", false],
-    ["x = sin(y) + cos(y^2)", false],
+    ["x = sin(y)+cos(y)", false],
     ["x = sin(y)", false],
   ]);
   const [_, setDebounceHandlers] = useState<number[]>([]);
@@ -29,7 +27,7 @@ const GraphComponent: FC = () => {
         if (GraphInst) {
           GraphInst.formulaGraph(input[1] ? input[0] : "", index);
         }
-      }, 500);
+      }, 250);
       newDebounceHandlers.push(handler);
     });
 
@@ -40,16 +38,6 @@ const GraphComponent: FC = () => {
       newDebounceHandlers.forEach((handler) => clearTimeout(handler));
     };
   }, [inputs, GraphInst, setDebounceHandlers]);
-
-  const onClickHome = () => {
-    if (!GraphInst) return;
-    GraphInst.resetPos();
-  };
-
-  const onClickScale = (dY: number) => {
-    if (!GraphInst) return;
-    GraphInst.scaleClick(dY);
-  };
 
   const handleAddInputClick = () => {
     handleAddInput(inputs, setInputs);
@@ -87,9 +75,7 @@ const GraphComponent: FC = () => {
 
   return (
     <>
-      <div
-        className={styles.graphBlockInput}
-      >
+      <div className={styles.graphBlockInput}>
         {inputs.map((input, index) => (
           <div key={index} className={styles.inputWrapper}>
             <div className={styles.inputBlock}>
@@ -129,22 +115,7 @@ const GraphComponent: FC = () => {
           Add
         </button>
       </div>
-      <div className={styles.RightElement}>
-        <button onClick={onClickHome} className={styles.HomePage}>
-          <img src={homeIcon} alt="home" />
-        </button>
-        <div className={styles.scaleBlock}>
-          <button
-            className={styles.scalePage}
-            onClick={() => onClickScale(-50)}
-          >
-            <img src={scalePlusIcon} alt="scalePlus" />
-          </button>
-          <button className={styles.scalePage} onClick={() => onClickScale(50)}>
-            <img src={scaleMinusIcon} alt="sclaeMinus" />
-          </button>
-        </div>
-      </div>
+      <RightMenu/>
     </>
   );
 };
