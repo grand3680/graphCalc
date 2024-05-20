@@ -14,7 +14,7 @@ export function drawGraph(
 ): void {
   var scale = this.scale;
   // gap to x in function div to scale and next to tuple size [width, heigh]
-  var { x: gapX, y: gapY } = this.size.cdiv(scale).cdiv(this.size)
+  var { x: gapX, y: gapY } = this.size.cdiv(scale).cdiv(this.size);
 
   var showVal = this.size.cdiv(scale);
 

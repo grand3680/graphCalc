@@ -49,8 +49,8 @@ export function drawAxis(this: graphDraw): void {
 
       for (let i = 0; i < 20; i++) {
         const angle = (i / 20) * (2 * Math.PI);
-        const x = precision(Math.max(maxRadius - size * 2, maxRadius / 2), size) * Math.cos(angle);
-        const y = precision(Math.max(maxRadius - size * 2, maxRadius / 2), size) * Math.sin(angle);
+        const x = precision(Math.max(size, maxRadius-size*4), size) * Math.cos(angle);
+        const y = precision(Math.max(size, maxRadius-size*4), size) * Math.sin(angle);
 
         const angleInDegrees = (angle * (180 / Math.PI)).toFixed(0) + '°';
         this.ctx.fillText(angleInDegrees, x, y);
@@ -75,7 +75,7 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.beginPath();
     const numRadialLines = 20;  // Number of radial lines
     for (let i = 0; i < numRadialLines; i++) {
-      const angle = (i / numRadialLines) * (2 * Math.PI);
+      const angle = (i / numRadialLines) * (2*Math.PI);
       const x = maxRadius * Math.cos(angle);
       const y = maxRadius * Math.sin(angle);
       this.ctx.moveTo(0, 0);
@@ -167,12 +167,10 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'bottom';
 
-    let startPosX = precision(-X - aX - size, size);
-    for (let x = startPosX; x <= X - aX; x += size) {
-      if (x == 0) continue;
+    let startPosX = precision(-X - aX - size*2, size*2);
+    for (let x = startPosX; x <= X - aX; x += size*2) {
+      if (x / 10 == 0) continue;
       let text = ` ${x / 10} `;
-      // delete float at the higt scale
-      if (Math.abs(startPosX / 10) > 20) text = ` ${x / 10 | 0} `;
       const { hangingBaseline } = this.ctx.measureText(text); // check height txt
 
       // min to 0 of x and max to + hangingBaseline
@@ -182,12 +180,10 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
 
-    let startPosY = precision(-Y - aY - size, size)
-    for (let y = startPosY; y <= Y - aY; y += size) {
-      if (y == 0) continue;
+    let startPosY = precision(-Y - aY - size*2, size*2)
+    for (let y = startPosY; y <= Y - aY; y += size*2) {
+      if (-y / 10 == 0) continue;
       let text = ` ${-y / 10} `;
-      // delete float at the higt scale
-      if (Math.abs(startPosY / 10) > 20) text = ` ${-y / 10 | 0} `;
       const { width } = this.ctx.measureText(text); // check width txt
 
       // min to -width of y and max to + width

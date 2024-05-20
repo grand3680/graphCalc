@@ -1,9 +1,8 @@
 .graphBlock {
-    height: 100vh;
     display: flex;
     flex-direction: row;
     flex: 1 1;
-    height: calc(100vh - 50px);
+    height: 100%;
     width: 100%;
 }
 
@@ -21,14 +20,15 @@
 @media (max-width: 800px) {
     .MenuBlock {
         width: 100% !important;
-        max-height: 40%;
-        min-height: 30%;
+        min-height: 50% !important;
         overflow-y: auto;
+    }
+    .canvasBlock {
+        min-height: 50%;
     }
 }
 
 .canvasBlock {
-    // position: relative;
     flex: 1;
     &>canvas {
         width: 100%;
