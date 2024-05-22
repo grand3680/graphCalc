@@ -4,7 +4,8 @@ import { drawAxis, drawGraph, drawIntersection, findIntersectionPoints } from '.
 interface typeFuncT {
   typeFun: string,
   color: string,
-  graphFormula: any
+  graphFormula: any,
+  indexFun : number,
 }
 
 export class graphDraw {
@@ -19,14 +20,14 @@ export class graphDraw {
   protected scale: number;
   protected centreGrap: number;
 
-  protected allDrawFuncs : Path2D[] = [];
+  protected allDrawFuncs: Path2D[] = [];
   public offsetX: number;
   public offsetY: number;
   public sizeAxis: number;
   // tuple {x, y} width \ heigh canvas
   public size: Vec2 = new Vec2();
   public mouse: Vec2 = new Vec2();
-  public typeGrid : string = "grid";
+  public typeGrid: string = "grid";
 
   set typeGridSet(val: string) { this.typeGrid = val };
 
@@ -40,7 +41,7 @@ export class graphDraw {
   get offsetYget() { return this.offsetY };
 
   set sizeAxisSet(val: number) { this.sizeAxis = val }
-  set scaleeNumSet(val : number) {this.scale = val}
+  set scaleeNumSet(val: number) { this.scale = val }
   get scaleNumGet() { return this.scale }
   get sizeGet() { return this.size }
 
@@ -66,7 +67,7 @@ export class graphDraw {
     this.ctx.clearRect(0, 0, width, height);
   }
 
-  public drawGraphFuns(funcs: Array<typeFuncT>) {
+  public drawGraphFuns(funcs: typeFuncT[]) {
     for (var i = 0; i < funcs.length; i++) {
       this.drawGraph(funcs[i]);
     }

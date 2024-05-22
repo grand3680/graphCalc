@@ -6,6 +6,7 @@ interface funGI {
   typeFun: string,
   color: string,
   graphFormula: (val: number) => number,
+  indexFun : number,
 }
 
 export function drawGraph(

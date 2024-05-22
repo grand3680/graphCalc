@@ -1,9 +1,16 @@
-import { graphDraw } from "./index";
+import { formulaReplace, graphDraw } from "./index";
 import { gamma, minMax } from "../../../utils/mathCalc"
 import { Vec2 } from "../../../utils/vec2";
 
-type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
+// type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
 type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
+
+interface typeFuncT {
+  typeFun: string,
+  color: string,
+  graphFormula: any,
+  indexFun : number,
+}
 
 export class graph {
   public canvas: HTMLCanvasElement;
@@ -15,21 +22,10 @@ export class graph {
   public dragStartY: number = 0;
   private initialDistance: number | null = 0;
 
-  public funcs: {
-    typeFun: string,
-    color: string,
-    graphFormula: any // refactor
-  }[];
+  public funcs: typeFuncT[] | null[] = [null];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-
-    this.funcs = [{
-      "typeFun": "x",
-      "color": "#ff0",
-      "graphFormula": new Function('x', 'return ' + "x")
-    }
-    ];
 
     this.drawGraph = new graphDraw(this.canvas)
     this.colors = ["#ff0000", "#D28F4C", "#3D8F4A", "#674AAA", "#FEFEFE", "#38BBBF", "#C773B9"];
@@ -43,7 +39,6 @@ export class graph {
     var offsetY: number = this.drawGraph.offsetYget;
 
     if ((Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) || this.isDragging) return;
-
 
     var smoothResetPosition = () => {
       if (this.isDragging) {
@@ -67,7 +62,7 @@ export class graph {
     const animationInterval = setInterval(smoothResetPosition, 16);
   }
 
-  public getClientRect(event: MouseEventT | TouchEventT): [any, any] {
+  public getClientRect(event: MouseEventT | TouchEvent): [null | number, null | number] {
     let clientX: number | null = null;
     let clientY: number | null = null;
 
@@ -82,8 +77,7 @@ export class graph {
     return [clientX, clientY];
   }
 
-
-  public handleDragDown = (event: TouchEventT | MouseEventT) => {
+  public handleDragDown = (event: TouchEvent | MouseEventT) => {
     this.isDragging = true;
     var [clientX, clientY] = this.getClientRect(event);
     if (!clientX || !clientY) return;
@@ -94,12 +88,10 @@ export class graph {
 
   public handleDragUp = () => this.isDragging = false;
 
-  public handleDragMove = (event: TouchEventT | MouseEventT) => {
+  public handleDragMove = (event: TouchEvent | MouseEventT) => {
     if (!this.isDragging) return;
     var [clientX, clientY] = this.getClientRect(event);
-
     if (!clientX || !clientY) return;
-    // this.drawGraph.mouseSet = Vec2.fromOffsetXY(touch);
 
     const deltaX = clientX - this.dragStartX;
     const deltaY = clientY - this.dragStartY;
@@ -118,17 +110,15 @@ export class graph {
     return Vec2.fromOffsetXY({ offsetX: x, offsetY: y });
   }
 
+  public wheelEvent(event: WheelEvent | TouchEvent) {
+    const deltaY = 'deltaY' in event ? event.deltaY : this.touchMove(event);
 
-  public wheelEvent(event: WheelEvent) {
     this.drawGraph.toScale(
-      this.calcScale(event.deltaY),
+      this.calcScale(deltaY),
       this.vec2FromOffsetXY(event)
-      // Vec2.fromOffsetXY(event)
     )
-
     this.start();
   }
-
 
   private calculateDistance(touch1: Touch, touch2: Touch): number {
     const dx = touch2.clientX - touch1.clientX;
@@ -136,24 +126,23 @@ export class graph {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  public touchStart(event: TouchEvent) {
+  public touchStart(event: TouchEvent ) {
+    if (event.touches.length == 1) this.handleDragDown(event)
     if (event.touches.length === 2) {
       this.initialDistance = this.calculateDistance(event.touches[0], event.touches[1]);
     }
   }
 
-  public touchMove(event: TouchEvent) {
-    if (event.touches.length !== 2 || !this.initialDistance) return;
+  public touchMove(event: TouchEvent) : number {
+    if (event.touches.length == 1) this.handleDragMove(event)
+    if (event.touches.length !== 2 || !this.initialDistance) return 0;
     var s = this.drawGraph.scaleNumGet;
 
     const currentDistance = this.calculateDistance(event.touches[0], event.touches[1]);
     const scale = currentDistance / this.initialDistance;
     const adjustedScale = s * scale;
 
-    this.drawGraph.toScale(adjustedScale, this.vec2FromOffsetXY(event));
-    this.start();
-
-    this.drawGraph.scaleeNumSet = adjustedScale;
+    return adjustedScale;
   }
 
   public touchEnd(event: TouchEvent) {
@@ -162,9 +151,9 @@ export class graph {
     }
   }
 
-
   public calcScale(dY: number): number {
     var s = this.drawGraph.scaleNumGet;
+    if (dY == 0) return s;
     return minMax(s - dY * s * 0.001, .01, 100)
   }
 
@@ -185,47 +174,7 @@ export class graph {
 
 
   public formulaGraph(val: string, indexInput: number) {
-    var correctFormla: string = val.replaceAll(' ', '');
-
-    var typeFunc: string = "y";
-    if (correctFormla.includes("=")) {
-      const parts: string[] = correctFormla.split("=");
-      typeFunc = parts[0].trim();
-      correctFormla = parts[1].trim();
-    }
-
-    const replacements: { [key: string]: string } = {
-      "pi": "Math.PI",
-      "e": "Math.E",
-      "\\^": "**",
-      "abs\\(([^)]+)\\)": "(Math.abs($1))",
-      "\\|([^|]+)\\|": "(Math.abs($1))",
-      "sqrt\\(([^)]+)\\)": "(Math.sqrt($1))",
-      "ln\\(([^)]+)\\)": "(Math.log($1))",
-      "log\\(([^),]+),([^)]+)\\)": "(Math.log($1)/Math.log($2))",
-
-      "arcsin\\(([^)]+)\\)": "(Math.asin($1))",
-      "arccos\\(([^)]+)\\)": "(Math.acos($1))",
-      "arctg\\(([^)]+)\\)": "(Math.atan($1))",
-      "arcctg\\(([^)]+)\\)": "(Math.PI/2-Math.atan($1))",
-
-      "(?:^|(?<=[+\\-*/]))sin\\(([^)]+)\\)": "(Math.sin($1))",
-      "(?:^|(?<=[+\\-*/]))cos\\(([^)]+)\\)": "(Math.cos($1))",
-      "(?:^|(?<=[+\\-*/]))tg\\(([^)]+)\\)": "(Math.tan($1))",
-      "(?:^|(?<=[+\\-*/]))ctg\\(([^)]+)\\)": "(1/Math.tan($1))",
-
-      "(\\w+)!": "frac($1)",
-      "\\(([^)]+)\\)!": "frac($1)",
-    };
-
-    for (const key in replacements) {
-      if (Object.prototype.hasOwnProperty.call(replacements, key)) {
-        const regexPattern: RegExp = new RegExp(`${key}`, "g");
-        correctFormla = correctFormla.replace(regexPattern, replacements[key]);
-      }
-    }
-
-    console.log(val, correctFormla);
+    var [correctFormla, typeFunc]: string[] = formulaReplace(val);
 
     try {
       const envFun = {
@@ -240,11 +189,7 @@ export class graph {
       var checkFunc = func(1);
 
       if (typeof checkFunc !== "number") {
-        this.funcs[indexInput] = {
-          typeFun: "x",
-          color: "#ff0",
-          graphFormula: null
-        };
+        this.funcs[indexInput] = null;
         throw new Error("Invalid function");
       }
 
@@ -252,6 +197,7 @@ export class graph {
         typeFun: typeFunc,
         color: this.colors[indexInput] ?? '#33f',
         graphFormula: func,
+        indexFun : indexInput
       }
     } catch (error) {
       console.log(error);
@@ -264,8 +210,7 @@ export class graph {
 
   public start() {
     this.drawGraph.drawAxis();
-      let funcses = this.funcs.filter(el => el.graphFormula !== null);
-      this.drawGraph.drawGraphFuns(funcses);
-
+    let funcses = this.funcs.filter(el => el !== null);
+    this.drawGraph.drawGraphFuns(funcses);
   }
 }
