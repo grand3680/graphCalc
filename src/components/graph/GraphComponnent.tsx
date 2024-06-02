@@ -5,13 +5,15 @@ import styles from "./styles/graph.module.scss";
 import MyContext from "../MyContext";
 import Menu from "../menuGraph/menu";
 
+type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
+type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 
 export const GraphComponnent: FC = () => {
   const canvasRef = useRef(null);
   const { graph: GraphInst, updateContext } = useContext(MyContext);
 
 
-  var onDragdown = (e: MouseEvent) => {
+  var onDragdown = (e: TouchEventT | MouseEventT) => {
     if (!GraphInst) return;
     GraphInst.handleDragDown(e);
   };
@@ -19,28 +21,10 @@ export const GraphComponnent: FC = () => {
     if (!GraphInst) return;
     GraphInst.handleDragUp();
   };
-  var onDragMove = (e: MouseEvent) => {
+  var onDragMove = (e: TouchEventT | MouseEventT) => {
     if (!GraphInst) return;
     GraphInst.handleDragMove(e);
   };
-
-  var onTouchStart = (e: TouchEvent) => {
-    if (!GraphInst) return;
-    GraphInst.touchStart(e);
-  };
-
-  var onTouchMove = (e: TouchEvent) => {
-    if (!GraphInst) return;
-    GraphInst.touchMove(e);
-  };
-  
-  var onTouchEnd = (e: TouchEvent) => {
-    if (!GraphInst) return;
-    GraphInst.touchEnd(e);
-  };
-
-
-
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -82,10 +66,9 @@ export const GraphComponnent: FC = () => {
             onMouseDown={(e) => onDragdown(e)}
             onMouseUp={() => onDragUp()}
             onMouseMove={(e) => onDragMove(e)}
-
-            onTouchStart={(e) => onTouchStart(e)}
-            onTouchEnd={(e) => onTouchEnd(e)}
-            onTouchMove={(e) => onTouchMove(e)}
+            onTouchStart={(e) => onDragdown(e)}
+            onTouchEnd={() => onDragUp()}
+            onTouchMove={(e) => onDragMove(e)}
             ref={canvasRef}
           />
         </div>

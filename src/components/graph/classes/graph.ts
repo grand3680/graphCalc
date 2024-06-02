@@ -2,7 +2,7 @@ import { formulaReplace, graphDraw } from "./index";
 import { gamma, minMax } from "../../../utils/mathCalc"
 import { Vec2 } from "../../../utils/vec2";
 
-// type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
+type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
 type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 
 interface typeFuncT {
@@ -40,6 +40,7 @@ export class graph {
 
     if ((Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) || this.isDragging) return;
 
+
     var smoothResetPosition = () => {
       if (this.isDragging) {
         clearInterval(animationInterval);
@@ -62,7 +63,7 @@ export class graph {
     const animationInterval = setInterval(smoothResetPosition, 16);
   }
 
-  public getClientRect(event: MouseEventT | TouchEvent): [null | number, null | number] {
+  public getClientRect(event: MouseEventT | TouchEventT): [any, any] {
     let clientX: number | null = null;
     let clientY: number | null = null;
 
@@ -77,7 +78,8 @@ export class graph {
     return [clientX, clientY];
   }
 
-  public handleDragDown = (event: TouchEvent | MouseEventT) => {
+
+  public handleDragDown = (event: TouchEventT | MouseEventT) => {
     this.isDragging = true;
     var [clientX, clientY] = this.getClientRect(event);
     if (!clientX || !clientY) return;
@@ -88,10 +90,12 @@ export class graph {
 
   public handleDragUp = () => this.isDragging = false;
 
-  public handleDragMove = (event: TouchEvent | MouseEventT) => {
+  public handleDragMove = (event: TouchEventT | MouseEventT) => {
     if (!this.isDragging) return;
     var [clientX, clientY] = this.getClientRect(event);
+
     if (!clientX || !clientY) return;
+    // this.drawGraph.mouseSet = Vec2.fromOffsetXY(touch);
 
     const deltaX = clientX - this.dragStartX;
     const deltaY = clientY - this.dragStartY;
@@ -110,15 +114,17 @@ export class graph {
     return Vec2.fromOffsetXY({ offsetX: x, offsetY: y });
   }
 
-  public wheelEvent(event: WheelEvent | TouchEvent) {
-    const deltaY = 'deltaY' in event ? event.deltaY : this.touchMove(event);
 
+  public wheelEvent(event: WheelEvent) {
     this.drawGraph.toScale(
-      this.calcScale(deltaY),
+      this.calcScale(event.deltaY),
       this.vec2FromOffsetXY(event)
+      // Vec2.fromOffsetXY(event)
     )
+
     this.start();
   }
+
 
   private calculateDistance(touch1: Touch, touch2: Touch): number {
     const dx = touch2.clientX - touch1.clientX;
@@ -126,23 +132,24 @@ export class graph {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  public touchStart(event: TouchEvent ) {
-    if (event.touches.length == 1) this.handleDragDown(event)
+  public touchStart(event: TouchEvent) {
     if (event.touches.length === 2) {
       this.initialDistance = this.calculateDistance(event.touches[0], event.touches[1]);
     }
   }
 
-  public touchMove(event: TouchEvent) : number {
-    if (event.touches.length == 1) this.handleDragMove(event)
-    if (event.touches.length !== 2 || !this.initialDistance) return 0;
+  public touchMove(event: TouchEvent) {
+    if (event.touches.length !== 2 || !this.initialDistance) return;
     var s = this.drawGraph.scaleNumGet;
 
     const currentDistance = this.calculateDistance(event.touches[0], event.touches[1]);
     const scale = currentDistance / this.initialDistance;
     const adjustedScale = s * scale;
 
-    return adjustedScale;
+    this.drawGraph.toScale(adjustedScale, this.vec2FromOffsetXY(event));
+    this.start();
+
+    this.drawGraph.scaleeNumSet = adjustedScale;
   }
 
   public touchEnd(event: TouchEvent) {
@@ -151,9 +158,9 @@ export class graph {
     }
   }
 
+
   public calcScale(dY: number): number {
     var s = this.drawGraph.scaleNumGet;
-    if (dY == 0) return s;
     return minMax(s - dY * s * 0.001, .01, 100)
   }
 
@@ -171,6 +178,7 @@ export class graph {
     }
     const animationInterval = setInterval(smoothScale, 16);
   }
+
 
 
   public formulaGraph(val: string, indexInput: number) {
