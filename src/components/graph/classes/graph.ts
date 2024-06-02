@@ -218,7 +218,7 @@ export class graph {
 
   public start() {
     this.drawGraph.drawAxis();
-    let funcses = this.funcs.filter(el => el !== null);
+    let funcses : typeFuncT[] = this.funcs.filter(el => el !== null);
     this.drawGraph.drawGraphFuns(funcses);
   }
 }
