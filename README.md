@@ -1,3 +1,5 @@
+[![workflow](https://github.com/grand3680/graphCalc/actions/workflows/main.yaml/badge.svg?branch=master)](https://github.com/grand3680/graphCalc/actions/workflows/main.yaml)
+
 # graph calculator
 
 ## list support command
