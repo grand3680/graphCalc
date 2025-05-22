@@ -1,12 +1,12 @@
 import { type FC, DragEvent, useContext, useEffect, useState } from 'react';
 import styles from './styles/graphMenu.module.scss';
 import MyContext from '../MyContext';
-import RightMenu from './rightMenu';
 
 import { handleAddInput, handleDeleteInput, handleInputChange } from '../graph/classes/handleInput';
 import HighLightConverter from './highLight';
+import clsx from 'clsx';
 
-const GraphComponent: FC = () => {
+const AsideComponent: FC = () => {
   const { graph: GraphInst } = useContext(MyContext);
   const [inputs, setInputs] = useState<Array<[string, boolean]>>([
     ['sin(x)', true],
@@ -70,45 +70,42 @@ const GraphComponent: FC = () => {
   };
 
   return (
-    <>
-      <div className={styles.graphBlockInput}>
-        {inputs.map((input, index) => (
-          <div key={index} className={styles.inputWrapper}>
-            <div className={styles.inputBlock}>
-              <div
-                className={styles.inputHandler}
-                draggable
-                onDragStart={(e) => handleDragStart(index, e)}
-                onDragOver={(e) => handleDragOver(index, e)}
-                onDrop={(e) => handleDrop(index, e)}
-              >
-                <span className={styles.countFun}>{index + 1}</span>
-                <button
-                  className={input[1] == true ? styles.activeGraph : styles.disabletGraph}
-                  onClick={() => clickSettings(index)}
-                ></button>
-              </div>
-              <input
-                className={styles.graphInput}
-                value={input[0]}
-                onChange={(e) => handleInputChangeValue(index, e.target.value)}
-                type="text"
-                placeholder={`Input ${index}`}
-              />
+    <aside className={clsx(styles.graphBlockInput, styles.MenuBlock)}>
+      {inputs.map((input, index) => (
+        <div key={index} className={styles.inputWrapper}>
+          <div className={styles.inputBlock}>
+            <div
+              className={styles.inputHandler}
+              draggable
+              onDragStart={(e) => handleDragStart(index, e)}
+              onDragOver={(e) => handleDragOver(index, e)}
+              onDrop={(e) => handleDrop(index, e)}
+            >
+              <span className={styles.countFun}>{index + 1}</span>
+              <button
+                className={input[1] ? styles.activeGraph : styles.disabletGraph}
+                onClick={() => clickSettings(index)}
+              ></button>
             </div>
-            <HighLightConverter expression={input[0]} />
-            <button className={styles.deleteButton} onClick={() => handleDeleteInputClick(index)}>
-              X
-            </button>
+            <input
+              className={styles.graphInput}
+              value={input[0]}
+              onChange={(e) => handleInputChangeValue(index, e.target.value)}
+              type="text"
+              placeholder={`Input ${index}`}
+            />
           </div>
-        ))}
-        <button className={styles.addButton} onClick={handleAddInputClick}>
-          Add
-        </button>
-      </div>
-      <RightMenu />
-    </>
+          <HighLightConverter expression={input[0]} />
+          <button className={styles.deleteButton} onClick={() => handleDeleteInputClick(index)}>
+            X
+          </button>
+        </div>
+      ))}
+      <button className={styles.addButton} onClick={handleAddInputClick}>
+        Add
+      </button>
+    </aside>
   );
 };
 
-export default GraphComponent;
+export default AsideComponent;

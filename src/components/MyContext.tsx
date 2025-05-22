@@ -12,7 +12,7 @@ const MyContext = createContext<{
 export const MyProvider: FC<PropsWithChildren> = ({ children }) => {
   const [graphInstance, setGraphClass] = useState<graph | null>(null);
 
-  var updateContext = (ClassInstance: graph) => {
+  const updateContext = (ClassInstance: graph) => {
     setGraphClass(ClassInstance);
   };
 

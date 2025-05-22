@@ -9,7 +9,7 @@ type TRect2 = [...([x: number, y: number] | [xy: Vec2]), ...([w: number, h: numb
 type TParameter = never | [] | [vec: Vec2] | [xy: TPointVec2] | [xy: number] | TTupleVec2;
 
 export function mutation<F extends TMutation>(args: TParameter, mutation: F): ReturnType<F> {
-  var first = args[0] ?? 0;
+  const first = args[0] ?? 0;
 
   if (typeof first === 'number') {
     if (typeof args[1] === 'number') return mutation.call(null, first, args[1]);

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
+import * as path from 'path';
 
 export default defineConfig({
   base: './',
@@ -18,5 +19,9 @@ export default defineConfig({
     port: 3000,
   },
 
-  plugins: [react({ plugins: [], tsDecorators: true }), viteSingleFile()],
+  resolve: {
+    alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+  },
+
+  plugins: [react(), viteSingleFile()],
 });

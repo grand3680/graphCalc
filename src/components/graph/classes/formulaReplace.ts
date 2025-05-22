@@ -1,13 +1,13 @@
 import { replacements } from '../config/replacements';
 
-export const formulaReplace = (val: string) => {
-  let correctFormla: string = val.replaceAll(' ', '');
+export const formulaReplace = (val: string): [string, string] => {
+  let correctFormula: string = val.replaceAll(' ', '');
 
   let typeFunc: string = 'y';
-  if (correctFormla.includes('=')) {
-    const parts: string[] = correctFormla.split('=');
+  if (correctFormula.includes('=')) {
+    const parts: string[] = correctFormula.split('=');
     typeFunc = parts[0].trim();
-    correctFormla = parts[1].trim();
+    correctFormula = parts[1].trim();
   }
 
   function insertMultiplicationOperators(expression: string): string {
@@ -21,14 +21,14 @@ export const formulaReplace = (val: string) => {
 
     return expression;
   }
-  correctFormla = insertMultiplicationOperators(correctFormla);
+  correctFormula = insertMultiplicationOperators(correctFormula);
 
   for (const key in replacements) {
     if (Object.prototype.hasOwnProperty.call(replacements, key)) {
       const regexPattern: RegExp = new RegExp(`${key}`, 'g');
-      correctFormla = correctFormla.replace(regexPattern, replacements[key]);
+      correctFormula = correctFormula.replace(regexPattern, replacements[key]);
     }
   }
 
-  return [correctFormla, typeFunc];
+  return [correctFormula, typeFunc];
 };

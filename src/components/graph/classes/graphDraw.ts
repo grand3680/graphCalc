@@ -1,12 +1,8 @@
-import { Vec2 } from '../../../utils/vec2';
+import { Vec2 } from '@/utils/vec2';
 import { drawAxis, drawGraph, drawIntersection, findIntersectionPoints } from './index';
+import { typeFuncT } from './graph';
 
-interface typeFuncT {
-  typeFun: string;
-  color: string;
-  graphFormula: any;
-  indexFun: number;
-}
+export type typeGridT = 'grid' | 'polar';
 
 export class graphDraw {
   protected findIntersectionPoints = findIntersectionPoints;
@@ -17,72 +13,27 @@ export class graphDraw {
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
 
-  protected scale: number;
-  protected centreGrap: number;
+  protected centreGrap: number = 10;
+  public scale: number = 1;
 
   protected allDrawFuncs: Path2D[] = [];
-  public offsetX: number;
-  public offsetY: number;
-  public sizeAxis: number;
+  public offsetX: number = 0;
+  public offsetY: number = 0;
+  public sizeAxis: number = 20;
   // tuple {x, y} width \ heigh canvas
   public size: Vec2 = new Vec2();
   public mouse: Vec2 = new Vec2();
-  public typeGrid: string = 'grid';
-
-  set typeGridSet(val: string) {
-    this.typeGrid = val;
-  }
-
-  set offsetXplus(val: number) {
-    this.offsetX += val;
-  }
-  set offsetYplus(val: number) {
-    this.offsetY += val;
-  }
-
-  set offsetXset(val: number) {
-    this.offsetX = val;
-  }
-  set offsetYset(val: number) {
-    this.offsetY = val;
-  }
-
-  get offsetXget() {
-    return this.offsetX;
-  }
-  get offsetYget() {
-    return this.offsetY;
-  }
-
-  set sizeAxisSet(val: number) {
-    this.sizeAxis = val;
-  }
-  set scaleeNumSet(val: number) {
-    this.scale = val;
-  }
-  get scaleNumGet() {
-    return this.scale;
-  }
-  get sizeGet() {
-    return this.size;
-  }
+  public typeGrid: typeGridT = 'grid';
 
   set mouseSet(val: Vec2) {
     this.mouse = val;
   }
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
 
-    this.offsetX = 0;
-    this.offsetY = 0;
-    this.sizeAxis = 20;
-
     this.setSizeCanvas();
-
-    this.scale = 1;
-
-    this.centreGrap = 10;
   }
 
   protected clearCanvas() {
@@ -101,7 +52,7 @@ export class graphDraw {
     const size = this.size.cdiv(2);
     const start = mouse.cminus(size).minus(this.offsetX, this.offsetY).cdiv(this.scale);
 
-    this.scaleeNumSet = scale;
+    this.scale = scale;
 
     mouse
       .minus(size)
@@ -111,8 +62,8 @@ export class graphDraw {
       .times(this.scale)
       .plus(this.offsetX, this.offsetY);
 
-    this.offsetXset = mouse.x;
-    this.offsetYset = mouse.y;
+    this.offsetX = mouse.x;
+    this.offsetY = mouse.y;
   }
 
   public setSizeCanvas() {

@@ -16,9 +16,9 @@ export const handleDeleteInput = (
   const newInputs = [...inputs];
   newInputs.splice(index, 1);
   if (GraphInstance) {
-    const Allfunc = GraphInstance.funcGet;
+    const Allfunc = GraphInstance.funcs;
     Allfunc.splice(index, 1);
-    GraphInstance.funcSet = Allfunc;
+    GraphInstance.funcs = Allfunc;
     setInputs(newInputs);
   }
 };

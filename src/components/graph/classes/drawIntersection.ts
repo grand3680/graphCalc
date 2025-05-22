@@ -1,10 +1,7 @@
+import { typeFuncT } from './graph';
 import { graphDraw } from './index';
 
-interface funGI {
-  typeFun: string;
-  color: string;
-  graphFormula: any;
-}
+type funGI = Omit<typeFuncT, 'indexFun'>;
 
 export function drawIntersection(this: graphDraw): void {
   const someFun1: funGI = {
@@ -22,11 +19,10 @@ export function drawIntersection(this: graphDraw): void {
     },
   };
 
-  var intersections: number[][] = this.findIntersectionPoints(someFun1, someFun2);
-  console.log(intersections);
+  const intersections: number[][] = this.findIntersectionPoints(someFun1, someFun2);
 
   this.ctx.beginPath();
-  for (var i = 0; i < intersections.length; i++) {
+  for (let i = 0; i < intersections.length; i++) {
     this.ctx.rect(intersections[i][0], intersections[i][1], 1, 1);
   }
   this.ctx.strokeStyle = '#fff';

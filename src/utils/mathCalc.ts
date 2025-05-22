@@ -14,7 +14,7 @@ export const derivative = (func: (x: number) => number, x: number, h: number = 0
   return slope;
 };
 
-export var gamma = (x: number): number => {
+export const gamma = (x: number): number => {
   if (Number.isInteger(x)) return frac(x);
 
   // Lanczos approximation constants
@@ -30,7 +30,7 @@ export var gamma = (x: number): number => {
     x -= 1;
 
     let a = p[0];
-    let t = x + g + 0.5;
+    const t = x + g + 0.5;
     for (let i = 1; i < p.length; i++) {
       a += p[i] / (x + i);
     }
@@ -39,7 +39,7 @@ export var gamma = (x: number): number => {
   }
 };
 
-export var frac = (n: number): number => {
+export const frac = (n: number): number => {
   let res = 1;
   while (n > 1) {
     res *= n;

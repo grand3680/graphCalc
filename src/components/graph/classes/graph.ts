@@ -1,25 +1,33 @@
 import { formulaReplace, graphDraw } from './index';
-import { gamma, minMax } from '../../../utils/mathCalc';
-import { Vec2 } from '../../../utils/vec2';
+import { gamma, minMax } from '@/utils/mathCalc';
+import { Vec2 } from '@/utils/vec2';
 
 type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
 type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 
-interface typeFuncT {
+export interface typeFuncT {
   typeFun: string;
   color: string;
-  graphFormula: any;
+  graphFormula: (...args: any[]) => number;
   indexFun: number;
 }
 
 export class graph {
-  public canvas: HTMLCanvasElement;
+  private canvas: HTMLCanvasElement;
   public drawGraph: graphDraw;
-  public colors: string[];
-  public isDragging: boolean = false;
+  private colors: string[] = [
+    '#ff0000',
+    '#D28F4C',
+    '#3D8F4A',
+    '#674AAA',
+    '#FEFEFE',
+    '#38BBBF',
+    '#C773B9',
+  ];
+  private isDragging: boolean = false;
 
-  public dragStartX: number = 0;
-  public dragStartY: number = 0;
+  private dragStartX: number = 0;
+  private dragStartY: number = 0;
   private initialDistance: number | null = 0;
 
   public funcs: typeFuncT[] | null[] = [null];
@@ -28,15 +36,14 @@ export class graph {
     this.canvas = canvas;
 
     this.drawGraph = new graphDraw(this.canvas);
-    this.colors = ['#ff0000', '#D28F4C', '#3D8F4A', '#674AAA', '#FEFEFE', '#38BBBF', '#C773B9'];
 
     this.drawGraph.drawAxis();
   }
 
   public resetPos() {
     const easingFactor = 0.1;
-    let offsetX: number = this.drawGraph.offsetXget;
-    let offsetY: number = this.drawGraph.offsetYget;
+    let offsetX = this.drawGraph.offsetX;
+    let offsetY = this.drawGraph.offsetY;
 
     if ((Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) || this.isDragging) return;
 
@@ -48,13 +55,13 @@ export class graph {
       offsetX -= offsetX * easingFactor;
       offsetY -= offsetY * easingFactor;
 
-      this.drawGraph.offsetXset = offsetX;
-      this.drawGraph.offsetYset = offsetY;
+      this.drawGraph.offsetX = offsetX;
+      this.drawGraph.offsetY = offsetY;
 
       // Check if offsets are close enough to zero to stop the animation
       if (Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) {
-        this.drawGraph.offsetXset = 0;
-        this.drawGraph.offsetYset = 0;
+        this.drawGraph.offsetX = 0;
+        this.drawGraph.offsetY = 0;
         clearInterval(animationInterval);
       }
       this.start();
@@ -65,15 +72,13 @@ export class graph {
   public getClientRect(event: MouseEventT | TouchEventT): [number, number] {
     if ('touches' in event) {
       return [event.touches[0].clientX, event.touches[0].clientY];
-    } else {
-      return [event.clientX, event.clientY];
     }
+    return [event.clientX, event.clientY];
   }
 
   public handleDragDown = (event: TouchEventT | MouseEventT) => {
     this.isDragging = true;
-    var [clientX, clientY] = this.getClientRect(event);
-    if (!clientX || !clientY) return;
+    const [clientX, clientY] = this.getClientRect(event);
 
     this.dragStartX = clientX;
     this.dragStartY = clientY;
@@ -84,14 +89,13 @@ export class graph {
   public handleDragMove = (event: TouchEventT | MouseEventT) => {
     if (!this.isDragging) return;
     const [clientX, clientY] = this.getClientRect(event);
-
     if (!clientX || !clientY) return;
 
     const deltaX = clientX - this.dragStartX;
     const deltaY = clientY - this.dragStartY;
 
-    this.drawGraph.offsetXplus = deltaX;
-    this.drawGraph.offsetYplus = deltaY;
+    this.drawGraph.offsetX = deltaX;
+    this.drawGraph.offsetY = deltaY;
     this.start();
 
     this.dragStartX = clientX;
@@ -105,11 +109,7 @@ export class graph {
   }
 
   public wheelEvent(event: WheelEvent) {
-    this.drawGraph.toScale(
-      this.calcScale(event.deltaY),
-      this.vec2FromOffsetXY(event),
-      // Vec2.fromOffsetXY(event)
-    );
+    this.drawGraph.toScale(this.calcScale(event.deltaY), this.vec2FromOffsetXY(event));
 
     this.start();
   }
@@ -128,7 +128,7 @@ export class graph {
 
   public touchMove(event: TouchEvent) {
     if (event.touches.length !== 2 || !this.initialDistance) return;
-    var s = this.drawGraph.scaleNumGet;
+    const s = this.drawGraph.scale;
 
     const currentDistance = this.calculateDistance(event.touches[0], event.touches[1]);
     const scale = currentDistance / this.initialDistance;
@@ -137,7 +137,7 @@ export class graph {
     this.drawGraph.toScale(adjustedScale, this.vec2FromOffsetXY(event));
     this.start();
 
-    this.drawGraph.scaleeNumSet = adjustedScale;
+    this.drawGraph.scale = adjustedScale;
   }
 
   public touchEnd(event: TouchEvent) {
@@ -147,7 +147,7 @@ export class graph {
   }
 
   public calcScale(dY: number): number {
-    const s = this.drawGraph.scaleNumGet;
+    const s = this.drawGraph.scale;
     return minMax(s - dY * s * 0.001, 0.01, 100);
   }
 
@@ -160,16 +160,21 @@ export class graph {
       if (i <= 0) {
         clearInterval(animationInterval);
       }
-      this.drawGraph.scaleeNumSet = this.calcScale(dY * i);
+      this.drawGraph.scale = this.calcScale(dY * i);
       this.start();
     };
     const animationInterval = setInterval(smoothScale, 16);
   }
 
   public formulaGraph(val: string, indexInput: number) {
-    const [correctFormla, typeFunc]: string[] = formulaReplace(val);
+    const [correctFormula, typeFunc] = formulaReplace(val);
 
     try {
+      if (correctFormula == '') {
+        this.funcs[indexInput] = null;
+        throw new Error('Invalid emtpy function');
+      }
+
       const envFun = {
         frac: gamma,
       };
@@ -177,10 +182,11 @@ export class graph {
       const funcsKey = [...Object.keys(envFun)];
       const funcsVal = [...Object.values(envFun)];
 
-      const func = new Function(...funcsKey, typeFunc == 'x' ? 'y' : 'x', 'return ' + correctFormla).bind(
-        null,
-        ...funcsVal,
-      );
+      const func: (typeFunc: number) => number = new Function(
+        ...funcsKey,
+        typeFunc == 'x' ? 'y' : 'x',
+        'return ' + correctFormula,
+      ).bind(null, ...funcsVal);
 
       const checkFunc = func(1);
 
@@ -201,16 +207,12 @@ export class graph {
       this.start();
     }
   }
-  set funcSet(val: any[]) {
-    this.funcs = val;
-  }
-  get funcGet() {
-    return this.funcs;
-  }
 
   public start() {
     this.drawGraph.drawAxis();
-    let funcses: typeFuncT[] = this.funcs.filter((el) => el !== null) as typeFuncT[];
+    // const funcses: typeFuncT[] = this.funcs.filter((el) => el !== null) as typeFuncT[];
+    const funcses: typeFuncT[] = this.funcs.filter((el) => el !== null) as typeFuncT[];
+
     this.drawGraph.drawGraphFuns(funcses);
   }
 }

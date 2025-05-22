@@ -1,14 +1,14 @@
-import { Vec2 } from '@/src/utils/vec2';
-import { minMax, precision } from '@/src/utils/mathCalc';
+import { Vec2 } from '@/utils/vec2';
+import { minMax, precision } from '@/utils/mathCalc';
 import { graphDraw } from './index';
 
 export function drawAxis(this: graphDraw): void {
-  var scale = this.scale;
+  const scale = this.scale;
 
   const { x: X, y: Y } = this.size.cdiv(scale).cdiv(2);
   if (!isFinite(X) || !isFinite(Y)) return;
 
-  this.sizeAxisSet = Math.max(5, precision(Math.min(X, Y) / 5, 5));
+  this.sizeAxis = Math.max(5, precision(Math.min(X, Y) / 5, 5));
 
   const dX = this.offsetX;
   const dY = this.offsetY;
@@ -161,10 +161,10 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'bottom';
 
-    let startPosX = precision(-X - aX - size * 2, size * 2);
+    const startPosX = precision(-X - aX - size * 2, size * 2);
     for (let x = startPosX; x <= X - aX; x += size * 2) {
       if (x / 10 == 0) continue;
-      let text = ` ${x / 10} `;
+      const text = ` ${x / 10} `;
       const { hangingBaseline } = this.ctx.measureText(text); // check height txt
 
       // min to 0 of x and max to + hangingBaseline
@@ -174,10 +174,10 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
 
-    let startPosY = precision(-Y - aY - size * 2, size * 2);
+    const startPosY = precision(-Y - aY - size * 2, size * 2);
     for (let y = startPosY; y <= Y - aY; y += size * 2) {
       if (-y / 10 == 0) continue;
-      let text = ` ${-y / 10} `;
+      const text = ` ${-y / 10} `;
       const { width } = this.ctx.measureText(text); // check width txt
 
       // min to -width of y and max to + width
@@ -186,7 +186,7 @@ export function drawAxis(this: graphDraw): void {
 
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'bottom';
-    let zeroText = ` 0 `;
+    const zeroText = ` 0 `;
     const { width } = this.ctx.measureText(zeroText);
     this.ctx.fillText(zeroText, -width, width);
   }

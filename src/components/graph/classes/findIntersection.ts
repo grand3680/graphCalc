@@ -1,4 +1,4 @@
-import { precision } from '@/src/utils/mathCalc';
+import { precision } from '@/utils/mathCalc';
 import { graphDraw } from './index';
 
 interface FunctionObject {
@@ -12,19 +12,19 @@ export function findIntersectionPoints(
   func1: FunctionObject,
   func2: FunctionObject,
 ): number[][] {
-  var scale = this.scaleNumGet;
-  var showVal = this.size.cdiv(scale);
+  const scale = this.scale;
+  const showVal = this.size.cdiv(scale);
 
   const { x: X, y: Y } = showVal;
 
-  var dX = this.offsetX;
-  var dY = this.offsetY;
+  const dX = this.offsetX;
+  const dY = this.offsetY;
 
-  var aX = dX / scale;
-  var aY = dY / scale;
-  var size = this.sizeAxis;
+  const aX = dX / scale;
+  const aY = dY / scale;
+  const size = this.sizeAxis;
 
-  var startX, startY, end;
+  let startX, startY, end;
 
   if (func1.typeFun === 'X') {
     startX = precision(-X - aX - size, size); // x
