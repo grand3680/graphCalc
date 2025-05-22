@@ -1,22 +1,18 @@
-import { type FC, DragEvent, useContext, useEffect, useState } from "react";
-import styles from "./styles/graphMenu.module.scss";
-import MyContext from "../MyContext";
-import RightMenu from "./rightMenu";
+import { type FC, DragEvent, useContext, useEffect, useState } from 'react';
+import styles from './styles/graphMenu.module.scss';
+import MyContext from '../MyContext';
+import RightMenu from './rightMenu';
 
-import {
-  handleAddInput,
-  handleDeleteInput,
-  handleInputChange,
-} from "../graph/classes/handleInput";
-import HighLightConverter from "./highLight";
+import { handleAddInput, handleDeleteInput, handleInputChange } from '../graph/classes/handleInput';
+import HighLightConverter from './highLight';
 
 const GraphComponent: FC = () => {
   const { graph: GraphInst } = useContext(MyContext);
   const [inputs, setInputs] = useState<Array<[string, boolean]>>([
-    ["sin(x)", true],
-    ["|x|", false],
-    ["x = sin(y)+cos(y)", false],
-    ["x = sin(y)", false],
+    ['sin(x)', true],
+    ['|x|', false],
+    ['x = sin(y)+cos(y)', false],
+    ['x = sin(y)', false],
   ]);
   const [_, setDebounceHandlers] = useState<number[]>([]);
 
@@ -25,7 +21,7 @@ const GraphComponent: FC = () => {
     inputs.forEach((input, index) => {
       const handler = setTimeout(() => {
         if (GraphInst) {
-          GraphInst.formulaGraph(input[1] ? input[0] : "", index);
+          GraphInst.formulaGraph(input[1] ? input[0] : '', index);
         }
       }, 250);
       newDebounceHandlers.push(handler);
@@ -52,7 +48,7 @@ const GraphComponent: FC = () => {
   };
 
   const handleDragStart = (index: number, e: DragEvent<HTMLDivElement>) => {
-    e.dataTransfer.setData("text/plain", index.toString());
+    e.dataTransfer.setData('text/plain', index.toString());
   };
 
   const handleDragOver = (_: number, e: DragEvent<HTMLDivElement>) => {
@@ -60,7 +56,7 @@ const GraphComponent: FC = () => {
   };
 
   const handleDrop = (index: number, e: React.DragEvent<HTMLDivElement>) => {
-    const dragIndex = parseInt(e.dataTransfer.getData("text/plain"));
+    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
     const newInputs = [...inputs];
     const [draggedItem] = newInputs.splice(dragIndex, 1);
     newInputs.splice(index, 0, draggedItem);
@@ -88,9 +84,7 @@ const GraphComponent: FC = () => {
               >
                 <span className={styles.countFun}>{index + 1}</span>
                 <button
-                  className={
-                    input[1] == true ? styles.activeGraph : styles.disabletGraph
-                  }
+                  className={input[1] == true ? styles.activeGraph : styles.disabletGraph}
                   onClick={() => clickSettings(index)}
                 ></button>
               </div>
@@ -103,10 +97,7 @@ const GraphComponent: FC = () => {
               />
             </div>
             <HighLightConverter expression={input[0]} />
-            <button
-              className={styles.deleteButton}
-              onClick={() => handleDeleteInputClick(index)}
-            >
+            <button className={styles.deleteButton} onClick={() => handleDeleteInputClick(index)}>
               X
             </button>
           </div>
@@ -115,7 +106,7 @@ const GraphComponent: FC = () => {
           Add
         </button>
       </div>
-      <RightMenu/>
+      <RightMenu />
     </>
   );
 };

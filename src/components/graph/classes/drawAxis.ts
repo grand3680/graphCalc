@@ -1,6 +1,6 @@
-import { Vec2 } from "../../../utils/vec2";
-import { minMax, precision } from "../../../utils/mathCalc";
-import { graphDraw } from "./index";
+import { Vec2 } from '../../../utils/vec2';
+import { minMax, precision } from '../../../utils/mathCalc';
+import { graphDraw } from './index';
 
 export function drawAxis(this: graphDraw): void {
   var scale = this.scale;
@@ -10,7 +10,6 @@ export function drawAxis(this: graphDraw): void {
 
   this.sizeAxisSet = Math.max(5, precision(Math.min(X, Y) / 5, 5));
 
-
   var dX = this.offsetX;
   var dY = this.offsetY;
 
@@ -18,16 +17,14 @@ export function drawAxis(this: graphDraw): void {
   var aY = dY / scale;
   var size = this.sizeAxis;
 
-  const center = new Vec2(this.size)
-    .div(2)
-    .plus(dX, dY);
+  const center = new Vec2(this.size).div(2).plus(dX, dY);
 
   // Camera
   this.ctx.resetTransform();
   this.clearCanvas();
   this.ctx.setTransform(scale, 0, 0, scale, ...center.tuple);
 
-  if (this.typeGrid == "polar") {
+  if (this.typeGrid == 'polar') {
     const maxRadius = Math.sqrt(Math.pow(X + Math.abs(aX), 2) + Math.pow(Y + Math.abs(aY), 2));
     // Draw concentric circles
     this.ctx.beginPath();
@@ -40,7 +37,6 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.stroke();
     this.ctx.closePath();
 
-
     this.ctx.fillStyle = '#fff';
     this.ctx.font = `${20 / scale}px monospace`;
     {
@@ -49,8 +45,8 @@ export function drawAxis(this: graphDraw): void {
 
       for (let i = 0; i < 20; i++) {
         const angle = (i / 20) * (2 * Math.PI);
-        const x = precision(Math.max(size, maxRadius-size*4), size) * Math.cos(angle);
-        const y = precision(Math.max(size, maxRadius-size*4), size) * Math.sin(angle);
+        const x = precision(Math.max(size, maxRadius - size * 4), size) * Math.cos(angle);
+        const y = precision(Math.max(size, maxRadius - size * 4), size) * Math.sin(angle);
 
         const angleInDegrees = (angle * (180 / Math.PI)).toFixed(0) + '°';
         this.ctx.fillText(angleInDegrees, x, y);
@@ -73,9 +69,9 @@ export function drawAxis(this: graphDraw): void {
 
     // Draw radial lines
     this.ctx.beginPath();
-    const numRadialLines = 20;  // Number of radial lines
+    const numRadialLines = 20; // Number of radial lines
     for (let i = 0; i < numRadialLines; i++) {
-      const angle = (i / numRadialLines) * (2*Math.PI);
+      const angle = (i / numRadialLines) * (2 * Math.PI);
       const x = maxRadius * Math.cos(angle);
       const y = maxRadius * Math.sin(angle);
       this.ctx.moveTo(0, 0);
@@ -88,7 +84,7 @@ export function drawAxis(this: graphDraw): void {
 
     // Draw smaller radial lines
     this.ctx.beginPath();
-    const numSmallRadialLines = numRadialLines * 6;  // Number of radial lines
+    const numSmallRadialLines = numRadialLines * 6; // Number of radial lines
     for (let i = 0; i < numSmallRadialLines; i++) {
       const angle = (i / numSmallRadialLines) * 2 * Math.PI;
       const x = maxRadius * Math.cos(angle);
@@ -102,8 +98,7 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.closePath();
   }
 
-
-  if (this.typeGrid == "grid") {
+  if (this.typeGrid == 'grid') {
     this.ctx.beginPath();
     {
       for (let x = precision(-X - aX - size, size); x <= X - aX; x += size) {
@@ -118,13 +113,12 @@ export function drawAxis(this: graphDraw): void {
 
       this.ctx.lineWidth = 1 / scale;
       this.ctx.strokeStyle = '#666666';
-      this.ctx.fillStyle = "#666666";
+      this.ctx.fillStyle = '#666666';
       this.ctx.stroke();
     }
     this.ctx.closePath();
 
-
-    // small Grid 
+    // small Grid
     this.ctx.beginPath();
     {
       for (let x = precision(-X - aX - size, size); x <= X - aX; x += size / 5) {
@@ -139,7 +133,7 @@ export function drawAxis(this: graphDraw): void {
 
       this.ctx.lineWidth = 0.5 / scale;
       this.ctx.strokeStyle = '#3A3A3A';
-      this.ctx.fillStyle = "#3A3A3A";
+      this.ctx.fillStyle = '#3A3A3A';
       this.ctx.stroke();
     }
     this.ctx.closePath();
@@ -167,8 +161,8 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'bottom';
 
-    let startPosX = precision(-X - aX - size*2, size*2);
-    for (let x = startPosX; x <= X - aX; x += size*2) {
+    let startPosX = precision(-X - aX - size * 2, size * 2);
+    for (let x = startPosX; x <= X - aX; x += size * 2) {
       if (x / 10 == 0) continue;
       let text = ` ${x / 10} `;
       const { hangingBaseline } = this.ctx.measureText(text); // check height txt
@@ -180,8 +174,8 @@ export function drawAxis(this: graphDraw): void {
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
 
-    let startPosY = precision(-Y - aY - size*2, size*2)
-    for (let y = startPosY; y <= Y - aY; y += size*2) {
+    let startPosY = precision(-Y - aY - size * 2, size * 2);
+    for (let y = startPosY; y <= Y - aY; y += size * 2) {
       if (-y / 10 == 0) continue;
       let text = ` ${-y / 10} `;
       const { width } = this.ctx.measureText(text); // check width txt
@@ -190,11 +184,10 @@ export function drawAxis(this: graphDraw): void {
       this.ctx.fillText(text, minMax(-width, -X - aX, X - aX - width), y);
     }
 
-
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'bottom';
     let zeroText = ` 0 `;
-    const { width } = this.ctx.measureText(zeroText)
+    const { width } = this.ctx.measureText(zeroText);
     this.ctx.fillText(zeroText, -width, width);
   }
 }

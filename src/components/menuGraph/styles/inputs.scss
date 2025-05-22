@@ -1,105 +1,105 @@
 .addButton,
 .deleteButton {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    border-radius: 8px;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 8px;
 }
 
 .countFun {
-    font-size: 20px;
-    color: #fff;
-    position: absolute;
-    padding: 0 2px;
-    top: 0;
-    left: 0;
+  font-size: 20px;
+  color: #fff;
+  position: absolute;
+  padding: 0 2px;
+  top: 0;
+  left: 0;
 }
 
 .activeGraph {
-    background-color: rgb(112, 181, 212);
+  background-color: rgb(112, 181, 212);
 }
 
 .disabletGraph {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .inputHandler {
-    background-color: #b39e9e;
+  background-color: #b39e9e;
+  border: none;
+  color: white;
+  height: 100%;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: all-scroll;
+  button {
+    width: 25px;
+    height: 25px;
+    margin: 0 auto;
+    border-radius: 50px;
     border: none;
-    color: white;
-    height: 100%;
-    width: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    cursor: all-scroll;
-    button {
-        width: 25px;
-        height: 25px;
-        margin: 0 auto;
-        border-radius: 50px;
-        border: none;
-        cursor: pointer;
-    }
+    cursor: pointer;
+  }
 }
 
 .inputBlock,
 .inputHandler:focus {
-    &:focus {
-        outline: none;
-        border: 1px #D8D8D8 solid;
-        .inputHandler {
-            background-color: red !important;
-        }
+  &:focus {
+    outline: none;
+    border: 1px #d8d8d8 solid;
+    .inputHandler {
+      background-color: red !important;
     }
+  }
 }
 
 .graphInput {
-    width: 100%;
-    height: 100%;
-    display: block;
-    background-color: #ffffffa1;
-    border: 1px #D8D8D8 solid;
-    border-bottom: #956C2D 3px solid;
-    padding: 5px 10px;
-    text-align: start;
-    &:focus {
-        outline: none;
-    }
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: #ffffffa1;
+  border: 1px #d8d8d8 solid;
+  border-bottom: #956c2d 3px solid;
+  padding: 5px 10px;
+  text-align: start;
+  &:focus {
+    outline: none;
+  }
 }
 
 .inputWrapper {
-    position: relative;
-    background-color: transparent;
-    margin-bottom: 10px;
+  position: relative;
+  background-color: transparent;
+  margin-bottom: 10px;
 }
 
 .deleteButton {
-    position: absolute;
-    top: -3px;
-    right: 0px;
+  position: absolute;
+  top: -3px;
+  right: 0px;
 }
 
 .addButton:hover,
 .deleteButton:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 .deleteButton {
-    background-color: transparent;
-    font-family: sans-serif;
-    font-size: 20px;
+  background-color: transparent;
+  font-family: sans-serif;
+  font-size: 20px;
 }
 
 .deleteButton:hover {
-    background-color: #da190b;
+  background-color: #da190b;
 }

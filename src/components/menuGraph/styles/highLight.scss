@@ -1,49 +1,49 @@
 .mathExpression {
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: white;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: white;
 }
 
 .mathExpression sup {
-    font-size: 0.8em;
-    vertical-align: super;
+  font-size: 0.8em;
+  vertical-align: super;
 }
 
 .mathExpression span {
-    display: inline-block;
-    margin-right: 2.5px;
+  display: inline-block;
+  margin-right: 2.5px;
 }
 
 .mathExpression span span {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .mathExpression span span span {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 0;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0;
 }
 
 .divisition {
-    color: white;
+  color: white;
 }
 
 .Mathsqrt {
-    font-size: 15px;
-    border-top: 1ps;
+  font-size: 15px;
+  border-top: 1ps;
 }
 
 .divisionLine {
-    border-top: 1px solid white;
-    width: 100%;
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 5px;
+  border-top: 1px solid white;
+  width: 100%;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .divisionNumerator,
 .divisionDenominator {
-    display: inline-block;
-    vertical-align: middle;
+  display: inline-block;
+  vertical-align: middle;
 }

@@ -1,5 +1,5 @@
-import { FC, PropsWithChildren, useState, createContext } from "react";
-import { graph } from "./graph/classes/index";
+import { FC, PropsWithChildren, useState, createContext } from 'react';
+import { graph } from './graph/classes/index';
 
 const MyContext = createContext<{
   graph: graph | null;
@@ -17,9 +17,7 @@ export const MyProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   return (
-    <MyContext.Provider value={{ graph: graphInstance, updateContext }}>
-      {children}
-    </MyContext.Provider>
+    <MyContext.Provider value={{ graph: graphInstance, updateContext }}>{children}</MyContext.Provider>
   );
 };
 

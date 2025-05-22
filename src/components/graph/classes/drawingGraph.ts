@@ -1,18 +1,14 @@
-import { precision } from "../../../utils/mathCalc";
-import { graphDraw } from "./index";
-
+import { precision } from '../../../utils/mathCalc';
+import { graphDraw } from './index';
 
 interface funGI {
-  typeFun: string,
-  color: string,
-  graphFormula: (val: number) => number,
-  indexFun : number,
+  typeFun: string;
+  color: string;
+  graphFormula: (val: number) => number;
+  indexFun: number;
 }
 
-export function drawGraph(
-  this: graphDraw,
-  funcG: funGI
-): void {
+export function drawGraph(this: graphDraw, funcG: funGI): void {
   var scale = this.scale;
   // gap to x in function div to scale and next to tuple size [width, heigh]
   var showVal = this.size.cdiv(scale);
@@ -33,7 +29,7 @@ export function drawGraph(
 
     var first = true;
     var previousGraphValue = null;
-    const jumpThreshold = Math.abs(-Y-aY)/scale;
+    const jumpThreshold = Math.abs(-Y - aY) / scale;
 
     for (let y = precision(-Y - aY - size, size); y <= Y - aY; y += gapY) {
       let graphValue = funcG.graphFormula(-y / 10) * 10;
@@ -43,7 +39,7 @@ export function drawGraph(
         continue;
       }
 
-      if (previousGraphValue !== null && (Math.abs(graphValue - previousGraphValue) > jumpThreshold)) {
+      if (previousGraphValue !== null && Math.abs(graphValue - previousGraphValue) > jumpThreshold) {
         first = true;
       }
       this.ctx[first ? 'moveTo' : 'lineTo'](graphValue, y);
@@ -62,7 +58,7 @@ export function drawGraph(
 
     var first = true;
     var previousGraphValue = null;
-    const jumpThreshold = Math.abs(-X-aX)/scale;
+    const jumpThreshold = Math.abs(-X - aX) / scale;
 
     for (let x = precision(-X - aX - size, size); x <= X - aX; x += gapX) {
       let graphValue = -funcG.graphFormula(x / 10) * 10;
@@ -72,7 +68,7 @@ export function drawGraph(
         continue;
       }
 
-      if (previousGraphValue !== null && (Math.abs(graphValue - previousGraphValue) > jumpThreshold)) {
+      if (previousGraphValue !== null && Math.abs(graphValue - previousGraphValue) > jumpThreshold) {
         first = true;
       }
       this.ctx[first ? 'moveTo' : 'lineTo'](x, graphValue);

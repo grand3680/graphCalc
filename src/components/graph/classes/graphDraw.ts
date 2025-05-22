@@ -2,10 +2,10 @@ import { Vec2 } from '../../../utils/vec2';
 import { drawAxis, drawGraph, drawIntersection, findIntersectionPoints } from './index';
 
 interface typeFuncT {
-  typeFun: string,
-  color: string,
-  graphFormula: any,
-  indexFun : number,
+  typeFun: string;
+  color: string;
+  graphFormula: any;
+  indexFun: number;
 }
 
 export class graphDraw {
@@ -27,25 +27,49 @@ export class graphDraw {
   // tuple {x, y} width \ heigh canvas
   public size: Vec2 = new Vec2();
   public mouse: Vec2 = new Vec2();
-  public typeGrid: string = "grid";
+  public typeGrid: string = 'grid';
 
-  set typeGridSet(val: string) { this.typeGrid = val };
+  set typeGridSet(val: string) {
+    this.typeGrid = val;
+  }
 
-  set offsetXplus(val: number) { this.offsetX += val };
-  set offsetYplus(val: number) { this.offsetY += val };
+  set offsetXplus(val: number) {
+    this.offsetX += val;
+  }
+  set offsetYplus(val: number) {
+    this.offsetY += val;
+  }
 
-  set offsetXset(val: number) { this.offsetX = val };
-  set offsetYset(val: number) { this.offsetY = val }
+  set offsetXset(val: number) {
+    this.offsetX = val;
+  }
+  set offsetYset(val: number) {
+    this.offsetY = val;
+  }
 
-  get offsetXget() { return this.offsetX };
-  get offsetYget() { return this.offsetY };
+  get offsetXget() {
+    return this.offsetX;
+  }
+  get offsetYget() {
+    return this.offsetY;
+  }
 
-  set sizeAxisSet(val: number) { this.sizeAxis = val }
-  set scaleeNumSet(val: number) { this.scale = val }
-  get scaleNumGet() { return this.scale }
-  get sizeGet() { return this.size }
+  set sizeAxisSet(val: number) {
+    this.sizeAxis = val;
+  }
+  set scaleeNumSet(val: number) {
+    this.scale = val;
+  }
+  get scaleNumGet() {
+    return this.scale;
+  }
+  get sizeGet() {
+    return this.size;
+  }
 
-  set mouseSet(val: Vec2) { this.mouse = val; }
+  set mouseSet(val: Vec2) {
+    this.mouse = val;
+  }
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
@@ -75,10 +99,7 @@ export class graphDraw {
 
   public toScale(scale: number, mouse = this.mouse) {
     const size = this.size.cdiv(2);
-    const start = mouse
-      .cminus(size)
-      .minus(this.offsetX, this.offsetY)
-      .cdiv(this.scale);
+    const start = mouse.cminus(size).minus(this.offsetX, this.offsetY).cdiv(this.scale);
 
     this.scaleeNumSet = scale;
 
@@ -88,7 +109,7 @@ export class graphDraw {
       .div(this.scale)
       .minus(start)
       .times(this.scale)
-      .plus(this.offsetX, this.offsetY)
+      .plus(this.offsetX, this.offsetY);
 
     this.offsetXset = mouse.x;
     this.offsetYset = mouse.y;

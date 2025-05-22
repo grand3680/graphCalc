@@ -1,34 +1,22 @@
 type TMutation = (x: number, y: number) => any;
-type TPointVec2 = { x: number, y: number; };
+type TPointVec2 = { x: number; y: number };
 type TTupleVec2 = [x: number, y: number];
-type TSizeVec2 = { width: number, height: number; };
-type TOffsetXY = { offsetX: number, offsetY: number; };
+type TSizeVec2 = { width: number; height: number };
+type TOffsetXY = { offsetX: number; offsetY: number };
 
-type TRect2 = [
-  ...([x: number, y: number] | [xy: Vec2]),
-  ...([w: number, h: number] | [wh: Vec2])
-];
+type TRect2 = [...([x: number, y: number] | [xy: Vec2]), ...([w: number, h: number] | [wh: Vec2])];
 
-type TParameter = (
-  never
-  | []
-  | [vec: Vec2]
-  | [xy: TPointVec2]
-  | [xy: number]
-  | TTupleVec2
-);
+type TParameter = never | [] | [vec: Vec2] | [xy: TPointVec2] | [xy: number] | TTupleVec2;
 
 export function mutation<F extends TMutation>(args: TParameter, mutation: F): ReturnType<F> {
   var first = args[0] ?? 0;
 
   if (typeof first === 'number') {
-    if (typeof args[1] === 'number')
-      return mutation.call(null, first, args[1]);
+    if (typeof args[1] === 'number') return mutation.call(null, first, args[1]);
     return mutation.call(null, first, first);
   }
 
-  if (first && ('x' in first) && ('y' in first))
-    return mutation.call(null, first.x, first.y);
+  if (first && 'x' in first && 'y' in first) return mutation.call(null, first.x, first.y);
 
   throw new Error('Unknown format');
 }
@@ -58,14 +46,14 @@ export class Vec2 {
   get size(): TSizeVec2 {
     return {
       width: this.x,
-      height: this.y
+      height: this.y,
     };
   }
 
   get point(): TPointVec2 {
     return {
       x: this.x,
-      y: this.y
+      y: this.y,
     };
   }
 
@@ -80,19 +68,12 @@ export class Vec2 {
   }
 
   inRect(...args: TRect2) {
-    const [x, y, w, h] = args.reduce<number[]>((acc, e) => (
-      e instanceof Vec2 ? (
-        acc.concat(e.x, e.y)
-      ) : (
-        acc.concat(e)
-      )
-    ), []);
+    const [x, y, w, h] = args.reduce<number[]>(
+      (acc, e) => (e instanceof Vec2 ? acc.concat(e.x, e.y) : acc.concat(e)),
+      [],
+    );
 
-    return (
-      this.x >= x &&
-      this.y >= y &&
-      this.x <= w + x &&
-      this.y <= h + y);
+    return this.x >= x && this.y >= y && this.x <= w + x && this.y <= h + y;
   }
 
   set(...args: TParameter) {
@@ -146,7 +127,6 @@ export class Vec2 {
   static fromOffsetXY(offset: TOffsetXY, vec = new this()) {
     return vec.set(offset.offsetX, offset.offsetY);
   }
-
 
   cdiv(...args: TParameter) {
     return this.clone().div(...args);

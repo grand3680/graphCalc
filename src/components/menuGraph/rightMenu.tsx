@@ -1,16 +1,15 @@
-import { type FC, useContext, useEffect, useRef, useState } from "react";
-import styles from "./styles/graphMenu.module.scss";
-import MyContext from "../MyContext";
-import homeIcon from "../../icons/home.png";
-import scalePlusIcon from "../../icons/scalePlus.png";
-import scaleMinusIcon from "../../icons/scaleMinus.png";
-import settingsIcon from "../../icons/settings.png";
+import { type FC, useContext, useEffect, useRef, useState } from 'react';
+import styles from './styles/graphMenu.module.scss';
+import MyContext from '../MyContext';
+import homeIcon from '../../icons/home.png';
+import scalePlusIcon from '../../icons/scalePlus.png';
+import scaleMinusIcon from '../../icons/scaleMinus.png';
+import settingsIcon from '../../icons/settings.png';
 
 const RightMenu: FC = () => {
   const { graph: GraphInst } = useContext(MyContext);
   const popupRef = useRef<HTMLDivElement>(null);
   const [activeMenu, setActiveMenu] = useState<boolean>(false);
-
 
   const handleClickOutside = (event: React.MouseEvent<Document>) => {
     if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
@@ -29,7 +28,6 @@ const RightMenu: FC = () => {
     GraphInst.resetPos();
   };
 
-
   const onClickScale = (dY: number) => {
     if (!GraphInst) return;
     GraphInst.scaleClick(dY);
@@ -47,17 +45,20 @@ const RightMenu: FC = () => {
         <button onClick={() => setActiveMenu(!activeMenu)} className={styles.HomePage}>
           <img src={settingsIcon} alt="settings" />
         </button>
-        <div ref={popupRef} className={`${styles.dragMenu} ${activeMenu ? styles.activeMenu : styles.disableMenu}`}>
+        <div
+          ref={popupRef}
+          className={`${styles.dragMenu} ${activeMenu ? styles.activeMenu : styles.disableMenu}`}
+        >
           <h2>Settings</h2>
           <div>
             <h3>grid</h3>
             <span className={styles.chooseGrid}>
               <p>polar grid</p>
-              <input name="grid" onClick={() => onClickGrid("polar")} type="radio" />
+              <input name="grid" onClick={() => onClickGrid('polar')} type="radio" />
             </span>
             <span className={styles.chooseGrid}>
               <p>Normal grid</p>
-              <input checked name="grid" onClick={() => onClickGrid("grid")} type="radio" />
+              <input checked name="grid" onClick={() => onClickGrid('grid')} type="radio" />
             </span>
           </div>
         </div>

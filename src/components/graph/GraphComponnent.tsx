@@ -1,9 +1,9 @@
-import { type FC, useContext, useEffect, useRef } from "react";
-import { graph } from "./classes/index";
-import styles from "./styles/graph.module.scss";
+import { type FC, useContext, useEffect, useRef } from 'react';
+import { graph } from './classes/index';
+import styles from './styles/graph.module.scss';
 
-import MyContext from "../MyContext";
-import Menu from "../menuGraph/menu";
+import MyContext from '../MyContext';
+import Menu from '../menuGraph/menu';
 
 type TouchEventT = React.TouchEvent<HTMLCanvasElement>;
 type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
@@ -11,7 +11,6 @@ type MouseEventT = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 export const GraphComponnent: FC = () => {
   const canvasRef = useRef(null);
   const { graph: GraphInst, updateContext } = useContext(MyContext);
-
 
   var onDragdown = (e: TouchEventT | MouseEventT) => {
     if (!GraphInst) return;
@@ -36,20 +35,20 @@ export const GraphComponnent: FC = () => {
       if (!GraphInst) return;
       GraphInst.drawGraph.setSizeCanvas();
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
   useEffect(() => {
     if (!GraphInst) return;
 
-    window.addEventListener("wheel", (event) => {
+    window.addEventListener('wheel', (event) => {
       GraphInst.wheelEvent(event);
     });
 
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       if (!GraphInst) return;
       GraphInst.drawGraph.setSizeCanvas();
     });

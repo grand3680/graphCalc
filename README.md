@@ -10,12 +10,13 @@
 6. `sqrt(x) - Square root`
 7. `ln(x)  log(x, n)`
 
+### and math constans
 
-### and math constans 
 1. pi
 2. e
 
 ### Roadmap
+
 - [x] scale wheel
 - [x] home, scale buttons
 - [x] mobile and adaptiv
@@ -26,8 +27,8 @@
   - [ ] derivatives
 - [ ] the equation with two variable
 
+### screens
 
-### screens 
 ![](screens/graphMilty.png)
 ![](screens/normalGrid.png)
 ![](screens/polarGrid.png)

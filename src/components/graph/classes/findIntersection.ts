@@ -1,5 +1,5 @@
-import { precision } from "../../../utils/mathCalc";
-import { graphDraw } from "./index";
+import { precision } from '../../../utils/mathCalc';
+import { graphDraw } from './index';
 
 interface FunctionObject {
   typeFun: string;
@@ -7,8 +7,8 @@ interface FunctionObject {
   color: string;
 }
 
-
-export function findIntersectionPoints(this: graphDraw,
+export function findIntersectionPoints(
+  this: graphDraw,
   func1: FunctionObject,
   func2: FunctionObject,
 ): number[][] {
@@ -56,9 +56,10 @@ export function findIntersectionPoints(this: graphDraw,
         intersections.push([x1, -y]);
       }
     }
-  } else { // One function in terms of x, the other in terms of y
-    const rangeX = (func1.typeFun === 'X') ? [startX, end] : [startY, end];
-    const rangeY = (func2.typeFun === 'X') ? [startY, end] : [startX, end];
+  } else {
+    // One function in terms of x, the other in terms of y
+    const rangeX = func1.typeFun === 'X' ? [startX, end] : [startY, end];
+    const rangeY = func2.typeFun === 'X' ? [startY, end] : [startX, end];
     for (let x = rangeX[0]; x <= rangeX[1]; x += step) {
       for (let y = rangeY[0]; y <= rangeY[1]; y += step) {
         const y1 = func1.graphFormula(x / 10);
