@@ -94,8 +94,8 @@ export class graph {
     const deltaX = clientX - this.dragStartX;
     const deltaY = clientY - this.dragStartY;
 
-    this.drawGraph.offsetX = deltaX;
-    this.drawGraph.offsetY = deltaY;
+    this.drawGraph.offsetX += deltaX;
+    this.drawGraph.offsetY += deltaY;
     this.start();
 
     this.dragStartX = clientX;
