@@ -7,14 +7,14 @@ interface funGI {
 }
 
 export function drawIntersection(this: graphDraw): void {
-  var someFun1: funGI = {
+  const someFun1: funGI = {
     typeFun: 'x',
     color: '#fff',
     graphFormula: (x: number) => {
       return Math.sin(x);
     },
   };
-  var someFun2: funGI = {
+  const someFun2: funGI = {
     typeFun: 'x',
     color: '#fff',
     graphFormula: (x: number) => {

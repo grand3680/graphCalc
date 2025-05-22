@@ -1,4 +1,4 @@
-import { precision } from '../../../utils/mathCalc';
+import { precision } from '@/src/utils/mathCalc';
 import { graphDraw } from './index';
 
 interface funGI {

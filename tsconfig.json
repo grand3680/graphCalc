@@ -19,8 +19,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./src",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "@/src/*": ["./src/*"]
+    }
   },
   "include": ["./src"],
 

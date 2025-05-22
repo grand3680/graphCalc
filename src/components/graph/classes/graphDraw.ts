@@ -92,7 +92,7 @@ export class graphDraw {
   }
 
   public drawGraphFuns(funcs: typeFuncT[]) {
-    for (var i = 0; i < funcs.length; i++) {
+    for (let i = 0; i < funcs.length; i++) {
       this.drawGraph(funcs[i]);
     }
   }

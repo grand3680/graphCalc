@@ -1,5 +1,5 @@
-import { Vec2 } from '../../../utils/vec2';
-import { minMax, precision } from '../../../utils/mathCalc';
+import { Vec2 } from '@/src/utils/vec2';
+import { minMax, precision } from '@/src/utils/mathCalc';
 import { graphDraw } from './index';
 
 export function drawAxis(this: graphDraw): void {
@@ -10,12 +10,12 @@ export function drawAxis(this: graphDraw): void {
 
   this.sizeAxisSet = Math.max(5, precision(Math.min(X, Y) / 5, 5));
 
-  var dX = this.offsetX;
-  var dY = this.offsetY;
+  const dX = this.offsetX;
+  const dY = this.offsetY;
 
-  var aX = dX / scale;
-  var aY = dY / scale;
-  var size = this.sizeAxis;
+  const aX = dX / scale;
+  const aY = dY / scale;
+  const size = this.sizeAxis;
 
   const center = new Vec2(this.size).div(2).plus(dX, dY);
 

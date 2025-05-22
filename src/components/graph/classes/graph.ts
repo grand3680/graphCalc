@@ -35,12 +35,12 @@ export class graph {
 
   public resetPos() {
     const easingFactor = 0.1;
-    var offsetX: number = this.drawGraph.offsetXget;
-    var offsetY: number = this.drawGraph.offsetYget;
+    let offsetX: number = this.drawGraph.offsetXget;
+    let offsetY: number = this.drawGraph.offsetYget;
 
     if ((Math.abs(offsetX) < 0.1 && Math.abs(offsetY) < 0.1) || this.isDragging) return;
 
-    var smoothResetPosition = () => {
+    const smoothResetPosition = () => {
       if (this.isDragging) {
         clearInterval(animationInterval);
         return;
@@ -62,19 +62,12 @@ export class graph {
     const animationInterval = setInterval(smoothResetPosition, 16);
   }
 
-  public getClientRect(event: MouseEventT | TouchEventT): [any, any] {
-    let clientX: number | null = null;
-    let clientY: number | null = null;
-
+  public getClientRect(event: MouseEventT | TouchEventT): [number, number] {
     if ('touches' in event) {
-      clientX = event.touches[0].clientX;
-      clientY = event.touches[0].clientY;
+      return [event.touches[0].clientX, event.touches[0].clientY];
     } else {
-      clientX = event.clientX;
-      clientY = event.clientY;
+      return [event.clientX, event.clientY];
     }
-
-    return [clientX, clientY];
   }
 
   public handleDragDown = (event: TouchEventT | MouseEventT) => {
@@ -90,10 +83,9 @@ export class graph {
 
   public handleDragMove = (event: TouchEventT | MouseEventT) => {
     if (!this.isDragging) return;
-    var [clientX, clientY] = this.getClientRect(event);
+    const [clientX, clientY] = this.getClientRect(event);
 
     if (!clientX || !clientY) return;
-    // this.drawGraph.mouseSet = Vec2.fromOffsetXY(touch);
 
     const deltaX = clientX - this.dragStartX;
     const deltaY = clientY - this.dragStartY;
@@ -155,14 +147,14 @@ export class graph {
   }
 
   public calcScale(dY: number): number {
-    var s = this.drawGraph.scaleNumGet;
+    const s = this.drawGraph.scaleNumGet;
     return minMax(s - dY * s * 0.001, 0.01, 100);
   }
 
   public scaleClick(dY: number) {
-    var i = 5;
+    let i = 5;
 
-    var smoothScale = () => {
+    const smoothScale = () => {
       i = i - 1;
 
       if (i <= 0) {
@@ -175,22 +167,22 @@ export class graph {
   }
 
   public formulaGraph(val: string, indexInput: number) {
-    var [correctFormla, typeFunc]: string[] = formulaReplace(val);
+    const [correctFormla, typeFunc]: string[] = formulaReplace(val);
 
     try {
       const envFun = {
         frac: gamma,
       };
 
-      var funcsKey = [...Object.keys(envFun)];
-      var funcsVal = [...Object.values(envFun)];
+      const funcsKey = [...Object.keys(envFun)];
+      const funcsVal = [...Object.values(envFun)];
 
-      var func = new Function(...funcsKey, typeFunc == 'x' ? 'y' : 'x', 'return ' + correctFormla).bind(
+      const func = new Function(...funcsKey, typeFunc == 'x' ? 'y' : 'x', 'return ' + correctFormla).bind(
         null,
         ...funcsVal,
       );
 
-      var checkFunc = func(1);
+      const checkFunc = func(1);
 
       if (typeof checkFunc !== 'number') {
         this.funcs[indexInput] = null;
