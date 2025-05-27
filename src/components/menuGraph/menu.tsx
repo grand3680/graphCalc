@@ -3,7 +3,6 @@ import styles from './styles/graphMenu.module.scss';
 import MyContext from '../MyContext';
 
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { handleAddInput, handleDeleteInput, handleInputChange } from '../graph/classes/handleInput';
 import clsx from 'clsx';
 
 type inputArrayType = Array<[string, boolean]>;
@@ -41,19 +40,32 @@ const AsideComponent: FC = () => {
 
   const handleDeleteInputClick = (index: number) => {
     if (!GraphInst) return;
-    handleDeleteInput(index, inputs, setInputs, GraphInst);
+    GraphInst.deleteByIndex(index);
+
+    setInputs((prev) => {
+      const newInputs = [...prev];
+      newInputs.splice(index, 1);
+      return newInputs
+    });
   };
   const handleInputChangeValue = (index: number, value: string) => {
-    handleInputChange(index, value, inputs, setInputs);
+    setInputs((prev) => {
+      const newInputs = [...prev];
+      newInputs[index][0] = value;
+      return newInputs
+    });
   };
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+    setInputs((prev) => {
+      if (!result.destination) return prev;
 
-    const reordered = [...inputs];
-    const [movedItem] = reordered.splice(result.source.index, 1);
-    reordered.splice(result.destination.index, 0, movedItem);
-    setInputs(reordered);
+      const reordered = [...prev];
+      const [movedItem] = reordered.splice(result.source.index, 1);
+      reordered.splice(result.destination.index, 0, movedItem);
+
+      return reordered
+    });
   };
 
   const clickSettings = (index: number) => {
@@ -70,7 +82,7 @@ const AsideComponent: FC = () => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              style={{ display: 'flex', flexDirection: 'column' }}
             >
               {inputs.map((input, index) => (
                 <Draggable key={index} draggableId={String(index)} index={index}>
@@ -84,6 +96,7 @@ const AsideComponent: FC = () => {
                         ...provided.draggableProps.style,
                         ...(snapshot.isDragging
                           ? {
+                              // i'm not finded is props style, but i hard coded 0px from Y cords
                               transform: `translate(0px, ${provided.draggableProps.style?.transform?.match(/translate\((?:[^,]+),\s*([^)]*)\)/)?.[1] ?? '0px'})`,
                             }
                           : {}),
@@ -121,7 +134,7 @@ const AsideComponent: FC = () => {
         </Droppable>
       </DragDropContext>
 
-      <button className={styles.addButton} onClick={() => handleAddInput(inputs, setInputs)}>
+      <button className={styles.addButton} onClick={() => setInputs([...inputs, ['', true]])}>
         Add
       </button>
     </aside>

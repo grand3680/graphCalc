@@ -40,6 +40,13 @@ export class graph {
     this.drawGraph.drawAxis();
   }
 
+  public deleteByIndex(index: number): void {
+    if (index >= 0 && index < this.funcs.length) {
+      this.funcs.splice(index, 1);
+      this.start();
+    }
+  }
+
   public resetPos() {
     const easingFactor = 0.1;
     let offsetX = this.drawGraph.offsetX;
