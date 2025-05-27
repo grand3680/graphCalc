@@ -1,15 +1,14 @@
-import { type FC, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, useEffect, useRef, useState } from 'react';
 import styles from './styles/graphMenu.module.scss';
-import MyContext from '../MyContext';
 import homeIcon from '@/icons/home.png';
 import scalePlusIcon from '@/icons/scalePlus.png';
 import scaleMinusIcon from '@/icons/scaleMinus.png';
 import settingsIcon from '@/icons/settings.png';
 import clsx from 'clsx';
 import { typeGridT } from '../graph/classes/graphDraw';
+import { graph } from '../graph/classes';
 
-const RightMenu: FC = () => {
-  const { graph: GraphInst } = useContext(MyContext);
+const RightMenu: FC<{ GraphInst: graph }> = ({ GraphInst }) => {
   const popupRef = useRef<HTMLDivElement>(null);
   const [activeMenu, setActiveMenu] = useState<boolean>(false);
   const [activeGrid, setActiveGrid] = useState<typeGridT>('grid');
@@ -28,17 +27,14 @@ const RightMenu: FC = () => {
   }, []);
 
   const onClickHome = () => {
-    if (!GraphInst) return;
     GraphInst.resetPos();
   };
 
   const onClickScale = (dY: number) => {
-    if (!GraphInst) return;
     GraphInst.scaleClick(dY);
   };
 
   const onClickGrid = (type: typeGridT) => {
-    if (!GraphInst) return;
     GraphInst.drawGraph.typeGrid = type;
     GraphInst.start();
     setActiveGrid(type);

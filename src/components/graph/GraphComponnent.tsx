@@ -40,8 +40,16 @@ export const GraphComponnent: FC = () => {
       GraphInst.wheelEvent(event);
     };
 
+    let resizeTimeout: NodeJS.Timeout | undefined;
+
     const onResize = () => {
       GraphInst.drawGraph.setSizeCanvas();
+
+      clearTimeout(resizeTimeout);
+
+      resizeTimeout = setTimeout(() => {
+        GraphInst.start();
+      }, 100);
     };
 
     window.addEventListener('wheel', onWheel);
@@ -66,7 +74,7 @@ export const GraphComponnent: FC = () => {
           ref={canvasRef}
         />
       </div>
-      <RightMenu />
+      {GraphInst && <RightMenu GraphInst={GraphInst} />}
     </main>
   );
 };

@@ -169,12 +169,13 @@ export class graph {
   public formulaGraph(val: string, indexInput: number) {
     const [correctFormula, typeFunc] = formulaReplace(val);
 
-    try {
-      if (correctFormula == '') {
-        this.funcs[indexInput] = null;
-        throw new Error('Invalid emtpy function');
-      }
+    if (correctFormula == '') {
+      this.funcs[indexInput] = null;
+      this.start();
+      return;
+    }
 
+    try {
       const envFun = {
         frac: gamma,
       };
@@ -192,7 +193,7 @@ export class graph {
 
       if (typeof checkFunc !== 'number') {
         this.funcs[indexInput] = null;
-        throw new Error('Invalid function');
+        throw new Error(`${func}, Invalid function`);
       }
 
       this.funcs[indexInput] = {
@@ -210,9 +211,7 @@ export class graph {
 
   public start() {
     this.drawGraph.drawAxis();
-    // const funcses: typeFuncT[] = this.funcs.filter((el) => el !== null) as typeFuncT[];
     const funcses: typeFuncT[] = this.funcs.filter((el) => el !== null) as typeFuncT[];
-
     this.drawGraph.drawGraphFuns(funcses);
   }
 }
