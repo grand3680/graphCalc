@@ -13,9 +13,11 @@
     "format:check": "prettier --debug-check './**/*.{js,jsx,ts,tsx,vue,css,scss,md}' --config ./.prettierrc"
   },
   "dependencies": {
+    "@types/react-beautiful-dnd": "^13.1.8",
     "clsx": "^2.1.1",
     "prettier": "^3.5.3",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "sass": "^1.76.0",
     "vite-plugin-singlefile": "^2.0.1"

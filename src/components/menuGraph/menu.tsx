@@ -2,24 +2,28 @@ import { type FC, DragEvent, useContext, useEffect, useState } from 'react';
 import styles from './styles/graphMenu.module.scss';
 import MyContext from '../MyContext';
 
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { handleAddInput, handleDeleteInput, handleInputChange } from '../graph/classes/handleInput';
-import HighLightConverter from './highLight';
 import clsx from 'clsx';
+
+type inputArrayType = Array<[string, boolean]>;
+
+const defaultFormulas: inputArrayType = [
+  ['sin(x)', true],
+  ['|x|', false],
+  ['x = sin(y)+cos(y)', false],
+  ['x = sin(y)', false],
+];
 
 const AsideComponent: FC = () => {
   const { graph: GraphInst } = useContext(MyContext);
-  const [inputs, setInputs] = useState<Array<[string, boolean]>>([
-    ['sin(x)', true],
-    ['|x|', false],
-    ['x = sin(y)+cos(y)', false],
-    ['x = sin(y)', false],
-  ]);
-  const [_, setDebounceHandlers] = useState<number[]>([]);
+  const [inputs, setInputs] = useState<inputArrayType>(defaultFormulas);
+  const [_, setDebounceHandlers] = useState<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    const newDebounceHandlers: number[] = [];
+    const newDebounceHandlers: NodeJS.Timeout[] = [];
     inputs.forEach((input, index) => {
-      const handler = setTimeout(() => {
+      const handler: NodeJS.Timeout = setTimeout(() => {
         if (GraphInst) {
           GraphInst.formulaGraph(input[1] ? input[0] : '', index);
         }
@@ -35,10 +39,6 @@ const AsideComponent: FC = () => {
     };
   }, [inputs, GraphInst, setDebounceHandlers]);
 
-  const handleAddInputClick = () => {
-    handleAddInput(inputs, setInputs);
-  };
-
   const handleDeleteInputClick = (index: number) => {
     if (!GraphInst) return;
     handleDeleteInput(index, inputs, setInputs, GraphInst);
@@ -47,20 +47,13 @@ const AsideComponent: FC = () => {
     handleInputChange(index, value, inputs, setInputs);
   };
 
-  const handleDragStart = (index: number, e: DragEvent<HTMLDivElement>) => {
-    e.dataTransfer.setData('text/plain', index.toString());
-  };
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
 
-  const handleDragOver = (_: number, e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (index: number, e: React.DragEvent<HTMLDivElement>) => {
-    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
-    const newInputs = [...inputs];
-    const [draggedItem] = newInputs.splice(dragIndex, 1);
-    newInputs.splice(index, 0, draggedItem);
-    setInputs(newInputs);
+    const reordered = [...inputs];
+    const [movedItem] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, movedItem);
+    setInputs(reordered);
   };
 
   const clickSettings = (index: number) => {
@@ -71,37 +64,66 @@ const AsideComponent: FC = () => {
 
   return (
     <aside className={clsx(styles.graphBlockInput, styles.MenuBlock)}>
-      {inputs.map((input, index) => (
-        <div key={index} className={styles.inputWrapper}>
-          <div className={styles.inputBlock}>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="inputs" direction="vertical">
+          {(provided) => (
             <div
-              className={styles.inputHandler}
-              draggable
-              onDragStart={(e) => handleDragStart(index, e)}
-              onDragOver={(e) => handleDragOver(index, e)}
-              onDrop={(e) => handleDrop(index, e)}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
             >
-              <span className={styles.countFun}>{index + 1}</span>
-              <button
-                className={input[1] ? styles.activeGraph : styles.disabletGraph}
-                onClick={() => clickSettings(index)}
-              ></button>
+              {inputs.map((input, index) => (
+                <Draggable key={index} draggableId={String(index)} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      className={styles.inputWrapper}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={{
+                        ...provided.draggableProps.style,
+                        ...(snapshot.isDragging
+                          ? {
+                              transform: `translate(0px, ${provided.draggableProps.style?.transform?.match(/translate\((?:[^,]+),\s*([^)]*)\)/)?.[1] ?? '0px'})`,
+                            }
+                          : {}),
+                      }}
+                    >
+                      <div className={styles.inputBlock}>
+                        <div className={styles.inputHandler}>
+                          <span className={styles.countFun}>{index + 1}</span>
+                          <button
+                            className={
+                              input[1] ? styles.activeGraph : styles.disabletGraph
+                            }
+                            onClick={() => clickSettings(index)}
+                          ></button>
+                        </div>
+                        <input
+                          className={styles.graphInput}
+                          value={input[0]}
+                          onChange={(e) => handleInputChangeValue(index, e.target.value)}
+                          type="text"
+                          placeholder={`Input ${index}`}
+                        />
+                      </div>
+                      <button
+                        className={styles.deleteButton}
+                        onClick={() => handleDeleteInputClick(index)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
             </div>
-            <input
-              className={styles.graphInput}
-              value={input[0]}
-              onChange={(e) => handleInputChangeValue(index, e.target.value)}
-              type="text"
-              placeholder={`Input ${index}`}
-            />
-          </div>
-          <HighLightConverter expression={input[0]} />
-          <button className={styles.deleteButton} onClick={() => handleDeleteInputClick(index)}>
-            X
-          </button>
-        </div>
-      ))}
-      <button className={styles.addButton} onClick={handleAddInputClick}>
+          )}
+        </Droppable>
+      </DragDropContext>
+
+      <button className={styles.addButton} onClick={() => handleAddInput(inputs, setInputs)}>
         Add
       </button>
     </aside>
