@@ -1,4 +1,4 @@
-import { type FC, DragEvent, useContext, useEffect, useState } from 'react';
+import { type FC, useContext, useEffect, useState } from 'react';
 import styles from './styles/graphMenu.module.scss';
 import MyContext from '../MyContext';
 
@@ -93,9 +93,7 @@ const AsideComponent: FC = () => {
                         <div className={styles.inputHandler}>
                           <span className={styles.countFun}>{index + 1}</span>
                           <button
-                            className={
-                              input[1] ? styles.activeGraph : styles.disabletGraph
-                            }
+                            className={input[1] ? styles.activeGraph : styles.disabletGraph}
                             onClick={() => clickSettings(index)}
                           ></button>
                         </div>
